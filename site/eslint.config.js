@@ -5,6 +5,11 @@ export default tseslint.config(
   { ignores: ["dist/**"] },
   ...tseslint.configs.recommended,
   {
+    languageOptions: {
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
     plugins: {
       "unused-imports": unusedImports,
     },
