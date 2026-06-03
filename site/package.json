@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "yarn run webpack",
-    "check": "yarn format && yarn lint && yarn typecheck",
+    "check-all": "yarn format && yarn lint && yarn typecheck",
     "dev": "yarn run webpack serve",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

@@ -7,6 +7,39 @@ on:
     branches: [main]
 
 jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - run: yarn format:check
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - run: yarn lint:check
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - run: yarn typecheck
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -16,13 +49,53 @@ jobs:
           node-version-file: .node-version
           cache: yarn
       - run: yarn install --frozen-lockfile
-      - name: Format check
-        run: yarn format:check
-      - name: Lint
-        run: yarn lint:check
-      - name: Typecheck
-        run: yarn typecheck
-      - name: Build
-        run: yarn build
-      - name: Publint
-        run: yarn publint
+      - run: yarn build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 1
+
+  publint:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      # publint resolves the package `exports` against the packed tarball, which
+      # references ./dist/*. Reuse the build job's output instead of rebuilding.
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - run: yarn publint
+
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: yarn
+          cache-dependency-path: |
+            yarn.lock
+            site/yarn.lock
+      # The site imports ../../src/index.ts, which re-exports from
+      # @proof.com/proof-vc-common. That package only resolves from the root
+      # node_modules, so the root install is required before the site checks.
+      - run: yarn install --frozen-lockfile
+      - run: yarn install --frozen-lockfile
+        working-directory: site
+      - run: yarn format:check
+        working-directory: site
+      - run: yarn lint:check
+        working-directory: site
+      - run: yarn typecheck
+        working-directory: site
+      - run: yarn build
+        working-directory: site
