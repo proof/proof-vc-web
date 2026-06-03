@@ -1,0 +1,79 @@
+{
+  "name": "@proof.com/proof-vc-web",
+  "version": "0.1.0",
+  "description": "Web Components for Proof Digital Credentials.",
+  "keywords": [
+    "VC",
+    "Verifiable Credentials",
+    "OID4VCI",
+    "OID4VCP",
+    "SD-JWT-VC",
+    "Selective Disclosures",
+    "Proof",
+    "Proof.com",
+    "OAuth",
+    "Web Component",
+    "Custom Element"
+  ],
+  "homepage": "https://github.com/proof/proof-vc-web",
+  "bugs": "https://github.com/proof/proof-vc-web/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/proof/proof-vc-web.git"
+  },
+  "license": "Apache-2.0",
+  "author": "Jeremie Charrier <jeremie.charrier@proof.com>",
+  "sideEffects": [
+    "./dist/index.js"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "check-all": "yarn format && yarn lint && yarn typecheck && yarn publint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint . --fix",
+    "lint:check": "eslint .",
+    "publint": "publint --pack npm",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@proof.com/proof-vc-common": "^0.1.2"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.15",
+    "eslint": "^10.4.0",
+    "eslint-plugin-unused-imports": "^4.4.1",
+    "prettier": "^3.8.3",
+    "prettier-plugin-packagejson": "^3.0.2",
+    "publint": "^0.3.21",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.4"
+  },
+  "peerDependencies": {
+    "@types/react": "^19"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

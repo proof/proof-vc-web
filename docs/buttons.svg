@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 856 416" width="856" height="416" role="img" aria-label="Continue with Proof buttons across themes and sizes">
+  <defs>
+    <symbol id="seal" viewBox="0 0 155 158">
+      <path d="M78.6 23.5V0C35.2 0 0 35.2 0 78.6c0 43.4 35.2 78.6 78.6 78.6v-23.4c-30.5 0-55.2-24.7-55.2-55.2 0-30.5 24.8-55.1 55.2-55.1Zm55.2 55.1c0 30.5-24.7 55.2-55.2 55.2v-23.4c17.5 0 31.7-14.2 31.7-31.7S96.1 46.9 78.6 46.9V23.5c30.5 0 55.2 24.7 55.2 55.1Z"/>
+      <path d="M78.6 46.9v63.5c-17.5 0-31.7-14.2-31.7-31.7s14.2-31.8 31.7-31.8Zm61.6 78.5c-.1-.6-.3-1-.8-1.3-.5-.3-1.1-.5-1.7-.5-.5 0-.9.1-1.3.2-.4.2-.7.4-.8.7-.2.2-.3.6-.3 1 0 .3.1.6.2.7.2.2.3.4.6.5.2.2.5.2.7.3.2.1.5.2.7.2l1.1.3c.3.1.7.2 1 .3.3.2.7.3 1 .6.3.2.6.5.8.9.2.4.3.8.3 1.3 0 .6-.2 1.1-.5 1.6s-.7.9-1.4 1.1c-.7.2-1.3.4-2.2.4-.8 0-1.5-.2-2.1-.4-.6-.2-1.1-.7-1.4-1.1-.3-.4-.5-1-.6-1.6h1.4c0 .4.2.7.4 1.1.2.3.6.5.9.6.3.1.8.2 1.2.2.5 0 1-.1 1.4-.2.4-.2.7-.4 1-.7.3-.3.3-.7.3-1.1 0-.3-.1-.7-.3-.9-.2-.2-.5-.4-.8-.6-.3-.2-.7-.2-1.1-.4l-1.4-.4c-.9-.2-1.6-.6-2.1-1.1-.5-.5-.7-1.1-.7-1.8s.2-1.1.5-1.6.8-.8 1.4-1.1c.6-.3 1.2-.4 2-.4.7 0 1.3.2 1.9.4.6.2 1 .6 1.3 1.1.3.5.5 1 .5 1.5l-1.1.2Zm3.7-2.8h1.6l3.8 9.3h.2l3.8-9.3h1.6v11.2h-1.2v-8.5h-.1l-3.4 8.5H149l-3.4-8.5h-.1v8.5h-1.2l-.4-11.2Z"/>
+    </symbol>
+    <style>
+      .label{font:600 12px Inter,system-ui,-apple-system,sans-serif;letter-spacing:.48px;fill:#6a6a76}
+      .btn-text{font:500 14px Inter,system-ui,-apple-system,sans-serif}
+      .btn-text-sm{font:500 12px Inter,system-ui,-apple-system,sans-serif}
+      .btn-text-lg{font:500 18px Inter,system-ui,-apple-system,sans-serif}
+      .sep{stroke:#eaeaef;stroke-width:1}
+    </style>
+  </defs>
+
+  <!-- separators -->
+  <line class="sep" x1="0" y1="104" x2="856" y2="104"/>
+  <line class="sep" x1="0" y1="208" x2="856" y2="208"/>
+  <line class="sep" x1="0" y1="312" x2="856" y2="312"/>
+
+  <!-- ROW 1: DARK (y_center = 52, bg #040919, fg #ffffff) -->
+  <text class="label" x="24" y="56">DARK</text>
+  <!-- icon 40x40 -->
+  <rect x="128" y="32" width="40" height="40" rx="8" fill="#040919"/>
+  <use href="#seal" x="139" y="43" width="18" height="18" fill="#ffffff"/>
+  <!-- small 152x32 -->
+  <rect x="192" y="36" width="152" height="32" rx="8" fill="#040919"/>
+  <use href="#seal" x="204" y="46" width="12" height="12" fill="#ffffff"/>
+  <text class="btn-text-sm" textLength="108" lengthAdjust="spacingAndGlyphs" x="224" y="57" fill="#ffffff">Continue with Proof</text>
+  <!-- medium 188x40 -->
+  <rect x="368" y="32" width="188" height="40" rx="8" fill="#040919"/>
+  <use href="#seal" x="384" y="45" width="14" height="14" fill="#ffffff"/>
+  <text class="btn-text" textLength="134" lengthAdjust="spacingAndGlyphs" x="406" y="57" fill="#ffffff">Continue with Proof</text>
+  <!-- large 252x56 -->
+  <rect x="580" y="24" width="252" height="56" rx="8" fill="#040919"/>
+  <use href="#seal" x="604" y="42" width="20" height="20" fill="#ffffff"/>
+  <text class="btn-text-lg" textLength="172" lengthAdjust="spacingAndGlyphs" x="636" y="59" fill="#ffffff">Continue with Proof</text>
+
+  <!-- ROW 2: GRAY (y_center = 156, bg #dfdfe5, fg #000000) -->
+  <text class="label" x="24" y="160">GRAY</text>
+  <rect x="128" y="136" width="40" height="40" rx="8" fill="#dfdfe5"/>
+  <use href="#seal" x="139" y="147" width="18" height="18" fill="#000000"/>
+  <rect x="192" y="140" width="152" height="32" rx="8" fill="#dfdfe5"/>
+  <use href="#seal" x="204" y="150" width="12" height="12" fill="#000000"/>
+  <text class="btn-text-sm" textLength="108" lengthAdjust="spacingAndGlyphs" x="224" y="161" fill="#000000">Continue with Proof</text>
+  <rect x="368" y="136" width="188" height="40" rx="8" fill="#dfdfe5"/>
+  <use href="#seal" x="384" y="149" width="14" height="14" fill="#000000"/>
+  <text class="btn-text" textLength="134" lengthAdjust="spacingAndGlyphs" x="406" y="161" fill="#000000">Continue with Proof</text>
+  <rect x="580" y="128" width="252" height="56" rx="8" fill="#dfdfe5"/>
+  <use href="#seal" x="604" y="146" width="20" height="20" fill="#000000"/>
+  <text class="btn-text-lg" textLength="172" lengthAdjust="spacingAndGlyphs" x="636" y="163" fill="#000000">Continue with Proof</text>
+
+  <!-- ROW 3: OUTLINE (y_center = 260, bg transparent, fg #000000, 1px #040919 border) -->
+  <text class="label" x="24" y="264">OUTLINE</text>
+  <rect x="128.5" y="240.5" width="39" height="39" rx="7.5" fill="none" stroke="#040919"/>
+  <use href="#seal" x="139" y="251" width="18" height="18" fill="#000000"/>
+  <rect x="192.5" y="244.5" width="151" height="31" rx="7.5" fill="none" stroke="#040919"/>
+  <use href="#seal" x="204" y="254" width="12" height="12" fill="#000000"/>
+  <text class="btn-text-sm" textLength="108" lengthAdjust="spacingAndGlyphs" x="224" y="265" fill="#000000">Continue with Proof</text>
+  <rect x="368.5" y="240.5" width="187" height="39" rx="7.5" fill="none" stroke="#040919"/>
+  <use href="#seal" x="384" y="253" width="14" height="14" fill="#000000"/>
+  <text class="btn-text" textLength="134" lengthAdjust="spacingAndGlyphs" x="406" y="265" fill="#000000">Continue with Proof</text>
+  <rect x="580.5" y="232.5" width="251" height="55" rx="7.5" fill="none" stroke="#040919"/>
+  <use href="#seal" x="604" y="250" width="20" height="20" fill="#000000"/>
+  <text class="btn-text-lg" textLength="172" lengthAdjust="spacingAndGlyphs" x="636" y="267" fill="#000000">Continue with Proof</text>
+
+  <!-- ROW 4: PRIMARY (y_center = 364, bg #0046fa, fg #ffffff) -->
+  <text class="label" x="24" y="368">PRIMARY</text>
+  <rect x="128" y="344" width="40" height="40" rx="8" fill="#0046fa"/>
+  <use href="#seal" x="139" y="355" width="18" height="18" fill="#ffffff"/>
+  <rect x="192" y="348" width="152" height="32" rx="8" fill="#0046fa"/>
+  <use href="#seal" x="204" y="358" width="12" height="12" fill="#ffffff"/>
+  <text class="btn-text-sm" textLength="108" lengthAdjust="spacingAndGlyphs" x="224" y="369" fill="#ffffff">Continue with Proof</text>
+  <rect x="368" y="344" width="188" height="40" rx="8" fill="#0046fa"/>
+  <use href="#seal" x="384" y="357" width="14" height="14" fill="#ffffff"/>
+  <text class="btn-text" textLength="134" lengthAdjust="spacingAndGlyphs" x="406" y="369" fill="#ffffff">Continue with Proof</text>
+  <rect x="580" y="336" width="252" height="56" rx="8" fill="#0046fa"/>
+  <use href="#seal" x="604" y="354" width="20" height="20" fill="#ffffff"/>
+  <text class="btn-text-lg" textLength="172" lengthAdjust="spacingAndGlyphs" x="636" y="371" fill="#ffffff">Continue with Proof</text>
+</svg>
