@@ -73,9 +73,9 @@ export class ProofVerifyId extends Base {
 
   async #onClick() {
     if (this.#pending) return;
-    const nonce = this.getAttribute("nonce");
-    if (nonce === null) {
-      throw new Error("<proof-verify-id>: 'nonce' attribute is required");
+    const nonce = this.nonce || this.getAttribute("nonce");
+    if (!nonce) {
+      throw new Error("<proof-verify-id>: 'nonce' is required");
     }
 
     this.#pending = true;
