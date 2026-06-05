@@ -99,10 +99,10 @@
   resolved "https://registry.yarnpkg.com/@owf/identity-common/-/identity-common-0.2.0.tgz#8f949ee972a1a22c5eec6a7b1499d9e1f783b339"
   integrity sha512-liOcJpoUxKkvAOko93VvrpC0w9ft+/D6lalrLoXrgrdd3/q3kGx2IeQ8fcrspw+F3IURfcvdDEH/RwEMx0DKMg==
 
-"@proof.com/proof-vc-common@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@proof.com/proof-vc-common/-/proof-vc-common-0.1.2.tgz#380a4d683817739cf86234291ced8e2d815aa24f"
-  integrity sha512-VoeTjd0LoFRUloCdfVBttDMm9ORqGRFiA46n8ZJnigxh+DF/LnXlHBDNkb5RwHbvNLaPTeCeNRudn/1V44BvhA==
+"@proof.com/proof-vc-common@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@proof.com/proof-vc-common/-/proof-vc-common-0.1.3.tgz#72cc1b9428cc1338c4dc6cd4179eec023745d00e"
+  integrity sha512-6Kf67uem1NiNb+NrVGtSlVELfqjN+G4+EnmRa/fmzgIw/WtIV73IcA+Q/NCRFYFgxPX2P3r3+3JGkICnryCdgg==
   dependencies:
     "@owf/crypto" "^0.2.0"
     "@owf/identity-common" "^0.2.0"
