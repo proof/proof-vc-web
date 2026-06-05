@@ -14,6 +14,7 @@ Browser-only ESM TypeScript package `@proof.com/proof-vc-web`. Ships one Web Com
 5. **Run `yarn check-all` before any commit or push.** It's this repo's "tests + lint": format, lint, typecheck, publint.
 6. **Keep `yarn publint` on `--pack npm`.** `--pack auto` picks yarn-1 mode and reports false-positive "file not published" errors.
 7. **Don't lower `engines.node` below `>=22.0.0`.** Matches proof-vc-common.
+8. **Never silence lint with `eslint-disable`.** Fix the underlying issue, not the warning. The only sanctioned exception is a reviewed config override (e.g. the per-file `no-namespace` rule for `src/react.ts` in `eslint.config.js`) — not inline disable comments.
 
 ## Essential Commands
 
@@ -135,21 +136,26 @@ Prompt before publishing (Hard Rule 4).
 
 ### Release flow (after user confirms)
 
-`main` is branch-protected: direct pushes are rejected. The version bump goes through a PR, and the tag is pushed only after merge so it points at the commit on `main`.
+`main` is branch-protected: direct pushes are rejected. Bump on a branch, merge the PR, then create the Release against the exact merged commit SHA.
 
-1. Bump on a branch:
+1. Bump on a branch (no auto-tag from npm — the tag is created by `gh release create` in step 4):
    ```bash
    git switch -c release-X.Y.Z origin/main
-   npm version patch          # or minor / major
-   git tag -d vX.Y.Z          # discard npm's local tag; recreated in step 3
+   npm version patch --no-git-tag-version          # or minor / major; writes package.json only
+   git commit -am "Release X.Y.Z"
    git push -u origin release-X.Y.Z
    ```
-2. Open a PR. Approve and merge it in the GitHub UI.
-3. Tag the merged commit and create the Release:
+2. Open a PR. Approve and merge in the GitHub UI.
+3. Locate the merged commit SHA on `main` by grepping for the release commit subject:
    ```bash
-   git switch main && git pull --ff-only origin main
-   git tag vX.Y.Z && git push origin vX.Y.Z
-   gh release create vX.Y.Z --generate-notes
+   git fetch origin main
+   SHA=$(git log origin/main --grep='Release X.Y.Z' --format=%H -n 1)
+   echo "$SHA"   # sanity-check before using
+   ```
+   Expect exactly one match. If zero matches, the PR isn't merged yet. If multiple, narrow the grep to the exact subject (e.g. `--grep='^Release X\.Y\.Z$'`).
+4. Create the Release against that SHA — `gh release create` creates the tag automatically when it doesn't exist:
+   ```bash
+   gh release create vX.Y.Z --target "$SHA" --generate-notes
    ```
 
 The Release triggers `publish.yml`: check suite → tag must match `package.json` → `npm publish --provenance --access public`.
