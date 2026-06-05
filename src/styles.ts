@@ -113,10 +113,72 @@ button {
   width: 40px;
   height: 40px;
   border-radius: 8px;
+  font-size: 14px;
 
   svg {
     width: 18px;
     height: 18px;
+  }
+}
+
+.content {
+  display: inline-grid;
+}
+
+.content > * {
+  grid-area: 1 / 1;
+  align-self: center;
+  justify-self: center;
+}
+
+.dots {
+  display: none;
+  align-items: center;
+  gap: 0.35em;
+}
+
+button.loading .label {
+  visibility: hidden;
+}
+
+button.loading .dots {
+  display: inline-flex;
+}
+
+:host([size="icon"]) button.loading svg {
+  display: none;
+}
+
+.dot {
+  width: 0.4em;
+  height: 0.4em;
+  border-radius: 50%;
+  background-color: currentColor;
+  animation: proof-dot-wave 1.2s ease-in-out infinite;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes proof-dot-wave {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot {
+    animation: none;
+    opacity: 0.6;
   }
 }
 `;

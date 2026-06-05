@@ -47,8 +47,21 @@ export class ProofVerifyId extends Base {
     this.#button.innerHTML = SEAL_SVG;
 
     this.#label = document.createElement("span");
+    this.#label.className = "label";
     this.#label.textContent = LABEL;
-    this.#button.appendChild(this.#label);
+
+    const dots = document.createElement("span");
+    dots.className = "dots";
+    dots.setAttribute("aria-hidden", "true");
+    for (let i = 0; i < 3; i++) {
+      dots.appendChild(document.createElement("span")).className = "dot";
+    }
+
+    const content = document.createElement("span");
+    content.className = "content";
+    content.append(this.#label, dots);
+
+    this.#button.append(content);
 
     this.#button.addEventListener("click", () => {
       void this.#onClick();
@@ -79,7 +92,7 @@ export class ProofVerifyId extends Base {
     }
 
     this.#pending = true;
-    this.#button.disabled = true;
+    this.#setBusy(true);
     try {
       const state = this.getAttribute("state");
       const login_hint = this.getAttribute("login-hint");
@@ -95,7 +108,13 @@ export class ProofVerifyId extends Base {
       });
     } finally {
       this.#pending = false;
-      this.#button.disabled = false;
+      this.#setBusy(false);
     }
+  }
+
+  #setBusy(busy: boolean) {
+    this.#button.disabled = busy;
+    this.#button.classList.toggle("loading", busy);
+    this.#button.setAttribute("aria-busy", busy ? "true" : "false");
   }
 }
