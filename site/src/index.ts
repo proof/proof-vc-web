@@ -2,8 +2,8 @@ import { init, transactionData, ProofVerifyId } from "../../src/index.ts";
 
 init({
   environment: "next",
-  client_id: "caxdw5a7d",
-  callback_uri: "http://localhost:4000",
+  clientId: "caxdw5a7d",
+  callbackUri: "http://localhost:4000",
 });
 
 const txDemo = document.querySelector<ProofVerifyId>(
