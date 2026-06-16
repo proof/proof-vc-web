@@ -11,6 +11,7 @@ Read our [documentation](https://dev.proof.com/docs/digital-credentials-overview
 - [Installation](#installation)
 - [Getting Started](#getting-started)
   - [Transaction Templates](#transaction-templates)
+  - [Custom authorization URL](#custom-authorization-url)
 - [Styles](#styles)
 - [TypeScript](#typescript)
   - [React](#react)
@@ -76,6 +77,19 @@ const data = transactionData.paymentItemized({
   transactionData={data}
 />;
 ```
+
+### Custom authorization URL
+
+You can pass a `resolveAuthorizationUrl` property to create your own authorization request URL (e.g. a Pushed Authorization Request server-side).
+When set, the element ignores the `nonce` / `state` / `login-hint` / `transactionData` attributes.
+
+```javascript
+<proof-verify-id
+  resolveAuthorizationUrl={async () => await getAuthorizationRequestURL()}
+/>
+```
+
+Return `null` (or `undefined`) to cancel the redirect.
 
 ## Styles
 

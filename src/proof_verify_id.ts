@@ -22,6 +22,12 @@ const Base: typeof HTMLElement =
 
 const LABEL = "Continue with Proof";
 
+export type AuthorizationUrlResolver = () =>
+  | string
+  | null
+  | undefined
+  | Promise<string | null | undefined>;
+
 export class ProofVerifyId extends Base {
   static readonly observedAttributes = ["size"] as const;
 
@@ -29,12 +35,20 @@ export class ProofVerifyId extends Base {
   readonly #label: HTMLSpanElement;
   #pending = false;
   #transactionData: TransactionData | undefined;
+  #resolveAuthorizationUrl: AuthorizationUrlResolver | undefined;
 
   get transactionData(): TransactionData | undefined {
     return this.#transactionData;
   }
   set transactionData(value: TransactionData | undefined) {
     this.#transactionData = value;
+  }
+
+  get resolveAuthorizationUrl(): AuthorizationUrlResolver | undefined {
+    return this.#resolveAuthorizationUrl;
+  }
+  set resolveAuthorizationUrl(value: AuthorizationUrlResolver | undefined) {
+    this.#resolveAuthorizationUrl = value;
   }
 
   constructor() {
@@ -63,8 +77,11 @@ export class ProofVerifyId extends Base {
 
     this.#button.append(content);
 
-    this.#button.addEventListener("click", () => {
-      void this.#onClick();
+    // Listen on the host, not the inner button, so a programmatic
+    // `host.click()` (e.g. a form's submit handler) triggers the flow.
+    // A real click on the inner button bubbles up to the host too.
+    this.addEventListener("click", () => {
+      void this.#navigate();
     });
 
     shadow.appendChild(this.#button);
@@ -84,32 +101,42 @@ export class ProofVerifyId extends Base {
     }
   }
 
-  async #onClick() {
+  async #navigate() {
     if (this.#pending) return;
+
+    this.#pending = true;
+    this.#setBusy(true);
+    try {
+      const url = this.#resolveAuthorizationUrl
+        ? await this.#resolveAuthorizationUrl()
+        : await this.#buildAuthorizationUrl();
+
+      // A nullish result aborts the redirect (e.g. the resolver cancelled).
+      if (url) window.location.href = url;
+    } finally {
+      this.#pending = false;
+      this.#setBusy(false);
+    }
+  }
+
+  async #buildAuthorizationUrl(): Promise<string> {
     const nonce = this.nonce || this.getAttribute("nonce");
     if (!nonce) {
       throw new Error("<proof-verify-id>: 'nonce' is required");
     }
 
-    this.#pending = true;
-    this.#setBusy(true);
-    try {
-      const state = this.getAttribute("state");
-      const login_hint = this.getAttribute("login-hint");
-      const transaction_data =
-        this.#transactionData ?? this.getAttribute("transaction-data");
+    const state = this.getAttribute("state");
+    const login_hint = this.getAttribute("login-hint");
+    const transaction_data =
+      this.#transactionData ?? this.getAttribute("transaction-data");
 
-      window.location.href = await getAuthorizationRequestURL({
-        nonce,
-        scope: "urn:proof:params:scope:verifiable-credentials:basic",
-        ...(state !== null && { state }),
-        ...(login_hint !== null && { login_hint }),
-        ...(transaction_data !== null && { transaction_data }),
-      });
-    } finally {
-      this.#pending = false;
-      this.#setBusy(false);
-    }
+    return getAuthorizationRequestURL({
+      nonce,
+      scope: "urn:proof:params:scope:verifiable-credentials:basic",
+      ...(state !== null && { state }),
+      ...(login_hint !== null && { loginHint: login_hint }),
+      ...(transaction_data !== null && { transactionData: transaction_data }),
+    });
   }
 
   #setBusy(busy: boolean) {

@@ -52,11 +52,16 @@ Open shadow root holding one `<button>`, the seal `<svg>`, and a `<span>` label 
 - A single module-scope `CSSStyleSheet` built from `styles.ts` is adopted into every shadow root via `adoptedStyleSheets`.
 - `observedAttributes = ["size"]` — only `size` drives structural state (label visibility + `aria-label`). `theme` is pure CSS. `nonce`, `state`, `login-hint`, `transaction-data` are read at click time, not observed.
 - No `connectedCallback`. `attributeChangedCallback` fires on parser upgrade, `setAttribute`, and framework attribute updates — covering React/Vue/Svelte.
-- Click handler: resolve `nonce` (required, throws if missing), plus optional `state` / `login-hint` / transaction data; call `getAuthorizationRequestURL(...)`; set `window.location.href`. The button is `disabled` while the request is pending.
+- The `click` listener is on the **host** (`this`), not the inner `<button>`. A real button click bubbles up to the host (click is `composed`), and a programmatic `host.click()` fires on the host directly — so a consumer's form can trigger the flow with `el.querySelector("proof-verify-id").click()`, no shadow-root piercing. (Listening on the inner button would miss `host.click()`, since events don't propagate down into the shadow tree.)
+- `#navigate()` resolves the redirect URL, then sets `window.location.href` (a nullish URL aborts). It is `disabled` / busy while pending. The URL comes from either the `resolveAuthorizationUrl` property (if set) or `#buildAuthorizationUrl()` — see below.
+
+### resolveAuthorizationUrl — custom URL resolver
+
+`resolveAuthorizationUrl?: () => string | null | undefined | Promise<...>` is a property-only escape hatch. When set, `#navigate()` awaits it and redirects to its result instead of calling `#buildAuthorizationUrl()`; the `nonce` / `state` / `login-hint` / `transaction-data` inputs are ignored and `nonce` is not required. A nullish return aborts the redirect (the button re-enables); a throw propagates with the button restored. Use it for flows where the URL is produced elsewhere (e.g. a pushed authorization request made by the consumer). JS/JSX path only (it's a function); in TSX it's set as a property — works on React 19, use a ref on older React.
 
 ### nonce and transaction data — property vs attribute
 
-Both are read property-first, attribute-fallback in `#onClick`:
+Both are read property-first, attribute-fallback in `#buildAuthorizationUrl()`:
 
 - **`nonce`** — read as `this.nonce || this.getAttribute("nonce")`. `nonce` is a built-in IDL property, so frameworks assign it as a property (never calling `setAttribute`); property-first is required, or `getAttribute` returns null.
 - **`transaction_data`** (`AuthorizationRequestParams.transaction_data` accepts `TransactionData | string`):
