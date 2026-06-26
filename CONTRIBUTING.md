@@ -2,8 +2,8 @@
 
 ## Requirements
 
-- `node` >= 22.0.0
-- `yarn`
+- `node` >= 24.0.0 (CI and local dev use the version pinned in `.node-version`, currently 24.14.1)
+- `yarn` 4.x — managed by [Corepack](https://nodejs.org/api/corepack.html). Run `corepack enable` once; the version pinned by `packageManager` in `package.json` is then used automatically.
 
 ## Design Principles
 

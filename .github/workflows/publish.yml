@@ -20,7 +20,8 @@ jobs:
           node-version-file: .node-version
           registry-url: https://registry.npmjs.org
           cache: yarn
-      - run: yarn install --frozen-lockfile
+      - run: corepack enable
+      - run: yarn install
       - run: yarn lint:check
       - run: yarn typecheck
       - run: yarn build

@@ -18,7 +18,8 @@ jobs:
         with:
           node-version-file: .node-version
           cache: yarn
-      - run: yarn install --frozen-lockfile
+      - run: corepack enable
+      - run: yarn install
       - run: yarn format:check
 
   lint:
@@ -29,7 +30,8 @@ jobs:
         with:
           node-version-file: .node-version
           cache: yarn
-      - run: yarn install --frozen-lockfile
+      - run: corepack enable
+      - run: yarn install
       - run: yarn lint:check
 
   typecheck:
@@ -40,7 +42,8 @@ jobs:
         with:
           node-version-file: .node-version
           cache: yarn
-      - run: yarn install --frozen-lockfile
+      - run: corepack enable
+      - run: yarn install
       - run: yarn typecheck
 
   build:
@@ -51,7 +54,8 @@ jobs:
         with:
           node-version-file: .node-version
           cache: yarn
-      - run: yarn install --frozen-lockfile
+      - run: corepack enable
+      - run: yarn install
       - run: yarn build
       - uses: actions/upload-artifact@v7
         with:
@@ -68,7 +72,8 @@ jobs:
         with:
           node-version-file: .node-version
           cache: yarn
-      - run: yarn install --frozen-lockfile
+      - run: corepack enable
+      - run: yarn install
       # publint resolves the package `exports` against the packed tarball, which
       # references ./dist/*. Reuse the build job's output instead of rebuilding.
       - uses: actions/download-artifact@v8
@@ -88,11 +93,12 @@ jobs:
           cache-dependency-path: |
             yarn.lock
             site/yarn.lock
+      - run: corepack enable
       # The site imports ../../src/index.ts, which re-exports from
       # @proof.com/proof-vc-common. That package only resolves from the root
       # node_modules, so the root install is required before the site checks.
-      - run: yarn install --frozen-lockfile
-      - run: yarn install --frozen-lockfile
+      - run: yarn install
+      - run: yarn install
         working-directory: site
       - run: yarn format:check
         working-directory: site
