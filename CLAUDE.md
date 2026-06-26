@@ -14,7 +14,7 @@ Browser-only ESM TypeScript package `@proof.com/proof-vc-web`. Ships one Web Com
 5. **Run `yarn check-all` before any commit or push.** It's this repo's "tests + lint": format, lint, typecheck, publint. `check-all` does **not** cover `site/` (root `tsconfig.json` excludes it). Since `site/` imports parent `src/` and pulls `proof-vc-common`, changes to `src/`, dependencies, or `site/` can break the site's CI even when `check-all` passes — so also run the site's checks before commit: `cd site && yarn format:check && yarn lint:check && yarn typecheck && yarn build`.
 6. **Keep `yarn publint` on `--pack npm`.** `--pack auto` picks yarn-1 mode and reports false-positive "file not published" errors.
 7. **Don't lower `engines.node` below `>=24.0.0`.** Matches proof-vc-common.
-8. **Never silence lint with `eslint-disable`.** Fix the underlying issue, not the warning. The only sanctioned exception is a reviewed config override (e.g. the per-file `no-namespace` rule for `src/react.ts` in `eslint.config.js`) — not inline disable comments.
+8. **Never silence lint with `eslint-disable`.** Fix the underlying issue, not the warning. The only sanctioned exception is a reviewed config override (e.g. the per-file `no-namespace` rule for `src/react.ts` in `eslint.config.mjs`) — not inline disable comments.
 
 ## Essential Commands
 
@@ -114,7 +114,7 @@ Use `src/react.ts` as the template:
 
 1. Create `src/<framework>.ts` with the framework's module augmentation.
 2. Add to `package.json` `exports`: `"./<framework>": { "types": "./dist/<framework>.d.ts" }`.
-3. If its TS rules trip `no-namespace`, add the file to the per-file ESLint override in `eslint.config.js`.
+3. If its TS rules trip `no-namespace`, add the file to the per-file ESLint override in `eslint.config.mjs`.
 4. If a `@types/...` package is needed at build, add it to `devDependencies` and as an optional peer.
 
 ### Adjust the seal icon

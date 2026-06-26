@@ -1,3 +1,6 @@
+# Build artifacts
+dist/
+
 # Yarn
 # https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
 .yarn/*
