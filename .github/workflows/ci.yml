@@ -14,11 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - run: corepack enable
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
           cache: yarn
-      - run: corepack enable
       - run: yarn install
       - run: yarn format:check
 
@@ -26,11 +26,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - run: corepack enable
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
           cache: yarn
-      - run: corepack enable
       - run: yarn install
       - run: yarn lint:check
 
@@ -38,11 +38,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - run: corepack enable
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
           cache: yarn
-      - run: corepack enable
       - run: yarn install
       - run: yarn typecheck
 
@@ -50,11 +50,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - run: corepack enable
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
           cache: yarn
-      - run: corepack enable
       - run: yarn install
       - run: yarn build
       - uses: actions/upload-artifact@v7
@@ -68,11 +68,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - run: corepack enable
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
           cache: yarn
-      - run: corepack enable
       - run: yarn install
       # publint resolves the package `exports` against the packed tarball, which
       # references ./dist/*. Reuse the build job's output instead of rebuilding.
@@ -86,6 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - run: corepack enable
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
@@ -93,7 +94,6 @@ jobs:
           cache-dependency-path: |
             yarn.lock
             site/yarn.lock
-      - run: corepack enable
       # The site imports ../../src/index.ts, which re-exports from
       # @proof.com/proof-vc-common. That package only resolves from the root
       # node_modules, so the root install is required before the site checks.

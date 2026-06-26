@@ -32,6 +32,8 @@ Browser-only ESM TypeScript package `@proof.com/proof-vc-web`. Ships one Web Com
 
 Run tooling through `yarn`, not `npx` — the binaries are local devDependencies. Use the script when one exists (`yarn format:check`); otherwise run the local binary directly (`yarn prettier --check <file>`).
 
+The package manager is **Yarn Berry** (yarn@4, pinned by `packageManager` in `package.json`) managed via Corepack. Run `corepack enable` once before any `yarn` command; Corepack then auto-selects the pinned version. CI/publish workflows enable Corepack before `actions/setup-node` for the same reason — its `cache: yarn` probe runs `yarn --version` and would otherwise hit the runner's global yarn 1.x. `site/` is a non-workspace subdir with no `.yarnrc.yml` or `packageManager` of its own; Corepack and `.yarnrc.yml` both resolve by walking up the tree, so it inherits the root's Yarn version and install settings.
+
 ## Architecture
 
 ### Files
@@ -182,5 +184,7 @@ A 404 after a successful provenance step means npm rejected auth (it returns 404
 - Scope is `@proof.com` (with the dot), not `@proof`.
 - CI runs on the Node version in `.node-version`.
 - `@proof.com/proof-vc-common` is `yarn link`-ed during local dev; `package.json` already depends on the published version, the link just shadows it.
+- `.yarnrc.yml` hardens the toolchain: `enableScripts: false` (no dependency lifecycle scripts run — allow a specific package via `dependenciesMeta.<pkg>.built: true` if one ever legitimately needs a build step) and `npmMinimalAgeGate: 1w` (refuses npm versions younger than a week, mirroring the dependabot `cooldown`). The gate is overridden per-scope to `0` for first-party `@proof.com` packages (via `npmScopes`), so a freshly published `@proof.com/proof-vc-common` can be consumed immediately while third-party deps keep the week-long cooldown.
+- `enableImmutableInstalls: true` makes every `yarn install` lockfile-strict (CI **and** local): it never writes `yarn.lock`, and aborts with `YN0028` if the committed lockfile is out of sync with `package.json`. To intentionally update the lockfile locally (bump a dep, re-link `proof-vc-common`), run `yarn install --no-immutable`, then commit the updated `yarn.lock`.
 - `tsconfig.json` excludes `site`, `dist`, `node_modules` — don't remove from `exclude`; the site imports parent `src/`, which would otherwise cause `rootDir` failures.
 - `dist/` is build output; `tsc` overwrites but doesn't delete stale files. Don't add a clean step without asking.
