@@ -1,8 +1,8 @@
 import tseslint from "typescript-eslint";
 import unusedImports from "eslint-plugin-unused-imports";
 
-export default tseslint.config(
-  { ignores: ["dist/**"] },
+export const baseConfig = tseslint.config(
+  { ignores: ["dist/**", ".yarn/**"] },
   ...tseslint.configs.recommended,
   {
     languageOptions: {
@@ -26,10 +26,11 @@ export default tseslint.config(
       ],
     },
   },
-  {
-    files: ["src/react.ts"],
-    rules: {
-      "@typescript-eslint/no-namespace": "off",
-    },
-  },
 );
+
+export default tseslint.config(...baseConfig, {
+  files: ["src/react.ts"],
+  rules: {
+    "@typescript-eslint/no-namespace": "off",
+  },
+});
