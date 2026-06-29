@@ -18,7 +18,8 @@ To run it just `cd site && yarn dev`.
 
 ## Commands
 
-- `yarn build`
+- `yarn build` — `tsdown`: unbundled ESM + types for npm, plus the self-contained `dist/proof-verify-id.min.js` CDN bundle (ES2022)
+- `yarn test` — all tests: `yarn test:node` (`node:test` — built artifact + SSR) and `yarn test:browser` (`@web/test-runner` + Playwright, headless Chromium)
 - `yarn format`
 - `yarn lint`
 - `yarn typecheck`

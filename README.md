@@ -1,6 +1,6 @@
 # Proof Digital Credentials - Web Components
 
-<img src="docs/button.png" alt="drawing" width="300"/>
+<img src="https://raw.githubusercontent.com/proof/proof-vc-web/main/docs/button.png" alt="Continue with Proof button" width="300"/>
 
 _Web Components to harness Proof Digital Credentials built on top of [@proof.com/proof-vc-common](https://github.com/proof/proof-vc-common)._
 
@@ -9,13 +9,16 @@ Read our [documentation](https://dev.proof.com/docs/digital-credentials-overview
 ## Table of Contents
 
 - [Installation](#installation)
+- [CDN](#cdn)
 - [Getting Started](#getting-started)
   - [Transaction Templates](#transaction-templates)
   - [Custom authorization URL](#custom-authorization-url)
+  - [Events](#events)
 - [Styles](#styles)
 - [TypeScript](#typescript)
   - [React](#react)
 - [Documentation](#documentation)
+- [Changelog](#changelog)
 - [Contributing](#contributing)
 
 ## Installation
@@ -23,6 +26,37 @@ Read our [documentation](https://dev.proof.com/docs/digital-credentials-overview
 ```
 npm install @proof.com/proof-vc-web
 ```
+
+## CDN
+
+For no-build pages, load the self-contained bundle as a module script. It registers `<proof-verify-id>` as a side effect and also exports `init` / `transactionData`. **Pin an exact version** (and add [SRI](https://developer.mozilla.org/docs/Web/Security/Subresource_Integrity) in production):
+
+```html
+<script type="module">
+  import { init } from "https://cdn.jsdelivr.net/npm/@proof.com/proof-vc-web@0.2.0/dist/proof-verify-id.min.js";
+
+  init({
+    environment: "sandbox",
+    clientId: "<CLIENT_ID>",
+    callbackUri: "<CALLBACK_URI>",
+  });
+</script>
+
+<proof-verify-id nonce="3e8e4918-e9fb-453a-a538-81152be15c1b"></proof-verify-id>
+```
+
+To only register the element (and call `init` elsewhere), an external module script works too:
+
+```html
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/npm/@proof.com/proof-vc-web@0.2.0/dist/proof-verify-id.min.js"
+></script>
+```
+
+The bundle inlines all dependencies, so it is the only file you need. [unpkg](https://unpkg.com) works the same way, and the bare `https://cdn.jsdelivr.net/npm/@proof.com/proof-vc-web` resolves to it via the package's `jsdelivr` field.
+
+> For a security-sensitive flow, prefer self-hosting this file from your own origin (exact version pin + SRI) rather than depending on a public CDN at runtime.
 
 ## Getting Started
 
@@ -33,8 +67,8 @@ import { init } from "@proof.com/proof-vc-web";
 
 init({
   environment: "sandbox",
-  client_id: "<CLIENT_ID>",
-  callback_uri: "<CALLBACK_URI>",
+  clientId: "<CLIENT_ID>",
+  callbackUri: "<CALLBACK_URI>",
 });
 ```
 
@@ -91,6 +125,28 @@ When set, the element ignores the `nonce` / `state` / `login-hint` / `transactio
 
 Return `null` (or `undefined`) to cancel the redirect.
 
+### Events
+
+The element dispatches two `CustomEvent`s. Both bubble and cross the shadow boundary (`composed`), so you can listen on the element or any ancestor:
+
+- **`proof-error`** — starting the flow failed (e.g. a missing `nonce`, or a `resolveAuthorizationUrl` that threw). `event.detail.error` holds the cause.
+- **`proof-navigate`** — fired just before the browser is redirected to the authorization URL. `event.detail.url` is the resolved URL; call `event.preventDefault()` to suppress the hard redirect and navigate yourself (e.g. through a SPA router).
+
+```javascript
+const el = document.querySelector("proof-verify-id");
+
+el.addEventListener("proof-error", (e) => {
+  console.error("Proof flow failed:", e.detail.error);
+});
+
+el.addEventListener("proof-navigate", (e) => {
+  // e.preventDefault();        // opt out of the built-in redirect
+  // myRouter.push(e.detail.url);
+});
+```
+
+In React these are the `onProofError` and `onProofNavigate` props (see [React](#react)).
+
 ## Styles
 
 You can customize your `<proof-verify-id />` with the following attributes:
@@ -98,7 +154,7 @@ You can customize your `<proof-verify-id />` with the following attributes:
 - `theme`: `dark` | `gray` | `outline` | `primary` (default)
 - `size`: `icon` | `small` | `medium` (default) | `large`
 
-<img src="docs/buttons.png" alt="drawing" width="800"/>
+<img src="https://raw.githubusercontent.com/proof/proof-vc-web/main/docs/buttons.png" alt="proof-verify-id button themes and sizes" width="800"/>
 
 ## TypeScript
 
@@ -106,28 +162,34 @@ The package ships its own type definitions; everything you import from `@proof.c
 
 ### React
 
-`<proof-verify-id />` works in React 19+ JSX. To get type checking and prop autocomplete in TSX, opt in to the React types subpath in your project's `tsconfig.json`:
+A typed React wrapper is published at `@proof.com/proof-vc-web/react`. Install its peers, then import the component:
 
-```json
-{
-  "compilerOptions": {
-    "types": ["@proof.com/proof-vc-web/react"]
-  }
-}
+```
+npm install @proof.com/proof-vc-web @lit/react react
 ```
 
-Or, drop a triple-slash reference in any `.d.ts` file in your project:
+```tsx
+import { ProofVerifyId } from "@proof.com/proof-vc-web/react";
 
-```ts
-/// <reference types="@proof.com/proof-vc-web/react" />
+<ProofVerifyId
+  nonce="3e8e4918-e9fb-453a-a538-81152be15c1b"
+  theme="primary"
+  size="large"
+  transactionData={data}
+  onProofError={(e) => console.error(e.detail.error)}
+/>;
 ```
 
-Both forms activate the `React.JSX.IntrinsicElements` augmentation that types `nonce`, `theme`, `size`, `transactionData`, and the other attributes.
+Element properties (`theme`, `size`, `state`, `loginHint`, `transactionData`, `resolveAuthorizationUrl`) are typed props, `nonce` and standard DOM attributes/events come from React, and the element's [events](#events) are exposed as the `onProofError` and `onProofNavigate` props. Importing the wrapper also registers the element. Works with React 17, 18, and 19 (via `@lit/react`). For any other React version — or no React — use the framework-agnostic `<proof-verify-id>` element directly.
 
 ## Documentation
 
 _Digital Credentials_ guides https://dev.proof.com/docs/digital-credentials-overview \
 _API Documentation_ https://dev.proof.com/reference/authorizeverifiablecredentialpresentation
+
+## Changelog
+
+Release notes are published on the [GitHub Releases](https://github.com/proof/proof-vc-web/releases) page; see also [CHANGELOG.md](CHANGELOG.md).
 
 ## Contributing
 

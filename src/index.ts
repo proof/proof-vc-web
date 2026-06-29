@@ -1,13 +1,16 @@
-import { ProofVerifyId } from "./proof_verify_id.ts";
+import { register } from "./register";
 
-if (
-  typeof customElements !== "undefined" &&
-  !customElements.get("proof-verify-id")
-) {
-  customElements.define("proof-verify-id", ProofVerifyId);
-}
+register();
 
-export { ProofVerifyId };
+export { ProofVerifyId } from "./proof-verify-id";
+export type {
+  AuthorizationUrlResolver,
+  ProofVerifyIdTheme,
+  ProofVerifyIdSize,
+  ProofErrorEventDetail,
+  ProofNavigateEventDetail,
+  ProofVerifyIdEventMap,
+} from "./proof-verify-id";
 export {
   init,
   transactionData,

@@ -1,44 +1,24 @@
 {
-  // Visit https://aka.ms/tsconfig to read more about this file
+  /* Webpack builds the site; tsc only typechecks. Bundler resolution matches
+     the parent package, whose src/ this imports. No `include` (matches the root
+     config): everything outside the excluded dirs is checked, so a new .ts can't
+     be silently missed. */
   "compilerOptions": {
-    // Environment Settings
-    // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
-    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "es2022",
+    "lib": ["es2022", "dom", "dom.iterable"],
     "types": [],
-    // For nodejs:
-    // "lib": ["esnext"],
-    // "types": ["node"],
-    // and npm install -D @types/node
-
-    // Other Outputs
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-
-    // Stricter Typechecking Options
+    "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-
-    // Style Options
-    // "noImplicitReturns": true,
-    // "noImplicitOverride": true,
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
-    // "noFallthroughCasesInSwitch": true,
-    // "noPropertyAccessFromIndexSignature": true,
-
-    // Recommended Options
-    "strict": true,
-    "jsx": "react-jsx",
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
+    "noUncheckedSideEffectImports": true,
+    "jsx": "react-jsx",
     "skipLibCheck": true,
-
-    // custom options
-    "rewriteRelativeImportExtensions": true,
-    "allowImportingTsExtensions": true
-  }
+    "noEmit": true
+  },
+  "exclude": ["node_modules", "dist"]
 }

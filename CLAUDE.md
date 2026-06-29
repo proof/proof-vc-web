@@ -5,30 +5,34 @@ Browser-only ESM TypeScript package `@proof.com/proof-vc-web`. Ships one Web Com
 ## Hard Rules
 
 1. **No `node:*` or Node-only imports under `src/`.** Browser-only package, no Node entry. Type-only imports (`import type` / `export type *`) are safe — `verbatimModuleSyntax: true` erases them at emit.
-2. **Keep the SSR guards in `src/proof_verify_id.ts` and `src/index.ts`.** Without them, three module-scope sites throw when an SSR framework evaluates the import in Node:
+2. **Keep the SSR guards in `src/proof-verify-id.ts` and `src/register.ts`.** Without them, three module-scope sites throw when an SSR framework evaluates the import in Node:
    - `class extends HTMLElement` → guarded by the conditional `Base` constant.
    - `new CSSStyleSheet()` → guarded by `typeof CSSStyleSheet !== "undefined"`.
    - `customElements.define(...)` → guarded by `typeof customElements !== "undefined"`.
-3. **Never reference `src/react.ts` from `src/index.ts`.** It's the types-only sub-path entry (`@proof.com/proof-vc-web/react`); importing it from the main entry forces every non-React consumer to install `@types/react`.
+3. **Never reference `src/react.ts` from `src/index.ts`.** It's the React wrapper sub-path entry (`@proof.com/proof-vc-web/react`, built on `@lit/react`); importing it from the main entry would force every consumer (Vue, plain HTML, Node) to install `react`/`@lit/react`.
 4. **Prompt before publishing.** Never bump the version, push tags, create a Release, or trigger the publish workflow without explicit confirmation — publishes are permanent.
-5. **Run `yarn check-all` before any commit or push.** It's this repo's "tests + lint": format, lint, typecheck, publint. `check-all` does **not** cover `site/` (root `tsconfig.json` excludes it). Since `site/` imports parent `src/` and pulls `proof-vc-common`, changes to `src/`, dependencies, or `site/` can break the site's CI even when `check-all` passes — so also run the site's checks before commit: `cd site && yarn format:check && yarn lint:check && yarn typecheck && yarn build`.
+5. **Run `yarn check-all` before any commit or push.** It runs the read-only checks (`format:check`, `lint:check`, `typecheck`, `publint`) — the same ones CI runs, so it never mutates the tree. It does **not** run the test suite: also run `yarn test` when you touch `src/` or `test/`. And it does **not** cover `site/` (root `tsconfig.json` excludes it). Since `site/` imports parent `src/` and pulls `proof-vc-common`, changes to `src/`, dependencies, or `site/` can break the site's CI even when `check-all` passes — so also run the site's checks before commit: `cd site && yarn format:check && yarn lint:check && yarn typecheck && yarn build`.
 6. **Keep `yarn publint` on `--pack npm`.** `--pack auto` picks yarn-1 mode and reports false-positive "file not published" errors.
 7. **Don't lower `engines.node` below `>=24.0.0`.** Matches the repo's pinned Node toolchain (`.node-version`).
-8. **Never silence lint with `eslint-disable`.** Fix the underlying issue, not the warning. The only sanctioned exception is a reviewed config override (e.g. the per-file `no-namespace` rule for `src/react.ts` in `eslint.config.mjs`) — not inline disable comments.
+8. **Never silence lint with `eslint-disable`.** Fix the underlying issue, not the warning. The only sanctioned exception is a reviewed rule change in `eslint.config.mjs` — not inline disable comments.
 
 ## Essential Commands
 
-| Command               | Purpose                                      |
-| --------------------- | -------------------------------------------- |
-| `yarn check-all`      | Full check: format, lint, typecheck, publint |
-| `yarn build`          | `tsc` emit to `dist/`                        |
-| `yarn typecheck`      | `tsc --noEmit`                               |
-| `yarn lint:check`     | eslint, no fix                               |
-| `yarn lint`           | `eslint --fix`                               |
-| `yarn format:check`   | `prettier --check`                           |
-| `yarn format`         | `prettier --write`                           |
-| `yarn publint`        | `publint --pack npm` (keep the flag)         |
-| `cd site && yarn dev` | Webpack dev server on http://localhost:4000  |
+| Command               | Purpose                                                                     |
+| --------------------- | --------------------------------------------------------------------------- |
+| `yarn check-all`      | Read-only checks: format:check, lint:check, typecheck, publint              |
+| `yarn build`          | `yarn analyze` then `tsdown` → `dist/` (unbundled ESM + types + CDN bundle) |
+| `yarn analyze`        | regenerate `custom-elements.json` (Custom Elements Manifest)                |
+| `yarn test`           | all tests (`test:node` + `test:browser`)                                    |
+| `yarn test:node`      | `node:test` — built-artifact + SSR checks (needs build)                     |
+| `yarn test:browser`   | `web-test-runner` (headless Chromium via Playwright)                        |
+| `yarn typecheck`      | `tsc --noEmit` (src) + `tsconfig.test.json` (browser tests)                 |
+| `yarn lint:check`     | eslint, no fix                                                              |
+| `yarn lint`           | `eslint --fix`                                                              |
+| `yarn format:check`   | `prettier --check`                                                          |
+| `yarn format`         | `prettier --write`                                                          |
+| `yarn publint`        | `publint --pack npm` (keep the flag)                                        |
+| `cd site && yarn dev` | Webpack dev server on http://localhost:4000                                 |
 
 Run tooling through `yarn`, not `npx` — the binaries are local devDependencies. Use the script when one exists (`yarn format:check`); otherwise run the local binary directly (`yarn prettier --check <file>`).
 
@@ -41,25 +45,31 @@ Yarn (Berry) is committed under `.yarn/releases/` and pinned via `yarnPath` in `
 | File                     | Role                                                                                                               |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------ |
 | `src/index.ts`           | Public entry. Registers `<proof-verify-id>` as an import side effect; re-exports `init`, `transactionData`, types. |
-| `src/proof_verify_id.ts` | The `ProofVerifyId` class extending `HTMLElement` (via guarded `Base`).                                            |
+| `src/proof-verify-id.ts` | The `ProofVerifyId` class extending `HTMLElement` (via guarded `Base`).                                            |
+| `src/register.ts`        | Guarded `customElements.define`; called by `index.ts` and `react.ts`.                                              |
 | `src/styles.ts`          | CSS as a tagged template literal. No SCSS, no sass build step.                                                     |
-| `src/react.ts`           | `declare module "react"` JSX augmentation. Sub-path types entry only.                                              |
+| `src/react.ts`           | `@lit/react` wrapper → typed `<ProofVerifyId>` component. Sub-path entry `./react`.                                |
 | `site/`                  | Local test app. Webpack-served, imports parent source via `../../src/index.ts`. Not published, not a workspace.    |
 | `docs/`                  | README assets (`button.svg`, `buttons.svg`).                                                                       |
 
 ### Element model
 
+The element is authored as a **vanilla `HTMLElement`**, not Lit — deliberate. For one branded button with near-trivial templating (label visibility + a loading class + aria), Lit's value (reactive-property + templating boilerplate removal) doesn't justify adding a runtime dependency (~5KB), ~2×-ing the CDN bundle, and reversing the zero-runtime-dep brand identity. Note `@lit/react` does **not** require Lit — it wraps any custom element, so "vanilla element + `@lit/react` wrapper" is coherent and intentional. **Switch trigger:** adopt Lit (with `@lit/react`) if this grows into a component **set** (3+ components) or the element gains **real dynamic templating/state** (conditional subtrees, lists, frequent re-render) — at that scale the per-component boilerplate flips the math.
+
 Open shadow root holding one `<button>`, the seal `<svg>`, and a `<span>` label (omitted when `size="icon"`).
 
 - A single module-scope `CSSStyleSheet` built from `styles.ts` is adopted into every shadow root via `adoptedStyleSheets`.
-- `observedAttributes = ["size"]` — only `size` drives structural state (label visibility + `aria-label`). `theme` is pure CSS. `nonce`, `state`, `login-hint`, `transaction-data` are read at click time, not observed.
+- `observedAttributes = ["size"]` — only `size` drives structural state (label visibility + `aria-label`). `theme`/`size`/`state`/`loginHint` are reflecting properties (getter/setter ↔ attribute) so frameworks can set them as props and the React wrapper types pick them up; `theme` is otherwise pure CSS. `nonce` (built-in IDL property) and `transaction-data` are read at click time.
 - No `connectedCallback`. `attributeChangedCallback` fires on parser upgrade, `setAttribute`, and framework attribute updates — covering React/Vue/Svelte.
 - The `click` listener is on the **host** (`this`), not the inner `<button>`. A real button click bubbles up to the host (click is `composed`), and a programmatic `host.click()` fires on the host directly — so a consumer's form can trigger the flow with `el.querySelector("proof-verify-id").click()`, no shadow-root piercing. (Listening on the inner button would miss `host.click()`, since events don't propagate down into the shadow tree.)
-- `#navigate()` resolves the redirect URL, then sets `window.location.href` (a nullish URL aborts). It is `disabled` / busy while pending. The URL comes from either the `resolveAuthorizationUrl` property (if set) or `#buildAuthorizationUrl()` — see below.
+- `#navigate()` resolves the redirect URL, dispatches a cancelable `proof-navigate` event, then sets `window.location.href` (a nullish URL, or a `preventDefault()`-ed event, aborts). The button stays `disabled` / busy while pending and **stays busy after a successful navigation** (only re-enabling on abort/cancel/error). The URL comes from either the `resolveAuthorizationUrl` property (if set) or `#buildAuthorizationUrl()` — see below.
+- Two `CustomEvent`s, both `bubbles`+`composed`+`cancelable`, typed via `ProofVerifyIdEventMap` (so `addEventListener` needs no cast): `proof-navigate` (detail `{ url }`, fired before redirect — `preventDefault()` to take over navigation) and `proof-error` (detail `{ error }`, on a missing nonce / throwing resolver, instead of an unhandled rejection). The React wrapper surfaces them as `onProofNavigate` / `onProofError`.
+- `aria-busy` is set on the **host** (observable from the light DOM); `disabled` + the `loading` class stay on the inner button.
+- Object properties (`transactionData`, `resolveAuthorizationUrl`) set **before upgrade** are recovered by `#upgradeProperties()` in the constructor (frameworks/SSR can assign them before `customElements.define` runs).
 
 ### resolveAuthorizationUrl — custom URL resolver
 
-`resolveAuthorizationUrl?: () => string | null | undefined | Promise<...>` is a property-only escape hatch. When set, `#navigate()` awaits it and redirects to its result instead of calling `#buildAuthorizationUrl()`; the `nonce` / `state` / `login-hint` / `transaction-data` inputs are ignored and `nonce` is not required. A nullish return aborts the redirect (the button re-enables); a throw propagates with the button restored. Use it for flows where the URL is produced elsewhere (e.g. a pushed authorization request made by the consumer). JS/JSX path only (it's a function); in TSX it's set as a property — works on React 19, use a ref on older React.
+`resolveAuthorizationUrl?: () => string | null | undefined | Promise<...>` is a property-only escape hatch. When set, `#navigate()` awaits it and redirects to its result instead of calling `#buildAuthorizationUrl()`; the `nonce` / `state` / `login-hint` / `transaction-data` inputs are ignored and `nonce` is not required. A nullish return aborts the redirect (the button re-enables); a throw propagates with the button restored. Use it for flows where the URL is produced elsewhere (e.g. a pushed authorization request made by the consumer). Set it as a property in JS, or pass it as a prop through the React wrapper.
 
 ### nonce and transaction data — property vs attribute
 
@@ -81,53 +91,49 @@ Themes (`dark` / `gray` / `outline` / `primary`) and sizes (`small` / `medium` /
 
 Same pattern for size. Default theme `primary`, default size `medium`.
 
-### Sub-path types entry
+### React sub-path (`./react`)
 
-`@proof.com/proof-vc-web/react` is types-only: `dist/react.js` is an empty module (it only makes the export valid); the `.d.ts` augments `React.JSX.IntrinsicElements` so `<proof-verify-id ...>` typechecks in TSX. Consumers opt in via `"types": ["@proof.com/proof-vc-web/react"]`, a triple-slash reference, or a type-only side-effect import.
+`@proof.com/proof-vc-web/react` is a runtime `@lit/react` wrapper: `src/react.ts` calls `register()` then `createComponent(...)` to export a typed `<ProofVerifyId>` component, and re-exports the public types so React consumers import everything from one entry. Element properties become typed props; the `proof-error` / `proof-navigate` events map to `onProofError` / `onProofNavigate`. `react` / `@lit/react` / `@types/react` are **optional** peers so non-React consumers aren't forced to install them. The `./react` export carries both `types` and `default` (runtime) conditions.
 
 ## TypeScript Conventions
 
 - `verbatimModuleSyntax: true` — use `import type` / `export type`.
 - `noUncheckedIndexedAccess: true` — indexing returns `T | undefined`; use `!` only when access is guaranteed safe.
 - `exactOptionalPropertyTypes: true` — spread optional fields conditionally: `...(state !== null && { state })`.
-- Local imports use the `.ts` extension (`rewriteRelativeImportExtensions` rewrites to `.js` on emit).
+- Local imports are written without a file extension (`import { css } from "./styles"`). `tsconfig.json` uses `moduleResolution: "bundler"`, and tsdown rewrites the specifiers to `./*.js` in the emitted output.
 - DOM/JSX attribute names are kebab-case (`login-hint`, `transaction-data`); the typed transaction-data JS property is camelCase (`transactionData`).
-- `src/react.ts` uses `namespace JSX` (the only legal React JSX augmentation); an ESLint per-file override disables `@typescript-eslint/no-namespace` there.
+- Test files use chai-style assertions; an ESLint override disables `@typescript-eslint/no-unused-expressions` under `test/**`.
 
 ## Recipes
 
 ### Add a theme
 
 1. `src/styles.ts`: add `:host([theme="<name>"]) button { ... }` with `background-color`, `color`, optional `border`, and `&:hover`.
-2. `src/react.ts`: add `<name>` to the `theme?` union in `ProofVerifyIdJSXAttributes`.
+2. `src/proof-verify-id.ts`: add `<name>` to the `ProofVerifyIdTheme` union (the React wrapper types pick it up automatically).
 3. `site/public/index.html`: add a demo row (optional).
 
-Themes are pure CSS — no change in `proof_verify_id.ts`.
+Themes are pure CSS — no change in `proof-verify-id.ts`.
 
 ### Add a size
 
 1. `src/styles.ts`: add `:host([size="<name>"]) button { ... }` with `height`, `padding`, `font-size`, `gap`, `border-radius`, `svg { width/height }`.
-2. `src/react.ts`: extend the `size?` union.
-3. Only if the size needs special label behavior (e.g. icon-only): update `#syncSize()` in `proof_verify_id.ts`.
+2. `src/proof-verify-id.ts`: extend the `ProofVerifyIdSize` union.
+3. Only if the size needs special label behavior (e.g. icon-only): update `#syncSize()` in `proof-verify-id.ts`.
 
-### Add a JSX types entry for another framework
+### Framework integration
 
-Use `src/react.ts` as the template:
-
-1. Create `src/<framework>.ts` with the framework's module augmentation.
-2. Add to `package.json` `exports`: `"./<framework>": { "types": "./dist/<framework>.d.ts" }`.
-3. If its TS rules trip `no-namespace`, add the file to the per-file ESLint override in `eslint.config.mjs`.
-4. If a `@types/...` package is needed at build, add it to `devDependencies` and as an optional peer.
+React gets a typed wrapper via `@lit/react` (`src/react.ts` → `<ProofVerifyId>`). Other frameworks use `<proof-verify-id>` natively — Vue needs `compilerOptions.isCustomElement`, Svelte/Solid handle custom elements directly. No per-framework type files are generated.
 
 ### Adjust the seal icon
 
-Replace the `SEAL_SVG` string in `proof_verify_id.ts` (assigned to `button.innerHTML`). It's `currentColor`-filled, so theming flows through. The same path is mirrored in `docs/button.svg` and `docs/buttons.svg` (`<symbol id="seal">`) — update those too or the docs drift.
+Replace the `SEAL_SVG` string in `proof-verify-id.ts` (assigned to `button.innerHTML`). It's `currentColor`-filled, so theming flows through. The same path is mirrored in `docs/button.svg` and `docs/buttons.svg` (`<symbol id="seal">`) — update those too or the docs drift.
 
 ## CI
 
-`.github/workflows/ci.yml`, on push and PR to `main`. One job per check, run in parallel: `format`, `lint`, `typecheck`, `build`, `publint`, `site`.
+`.github/workflows/ci.yml`, on push and PR to `main`. One job per check, run in parallel: `format`, `lint`, `typecheck`, `test`, `build`, `publint`, `site`.
 
-- `build` uploads `dist/` as an artifact; `publint` `needs: build` and downloads it (publint resolves `exports` against the packed tarball, so it needs the build output).
+- `build` runs `yarn build` then `yarn test:node` (built-artifact + SSR checks via `node:test`) and uploads `dist/` as an artifact; `publint` `needs: build` and downloads it (publint resolves `exports` against the packed tarball, so it needs the build output).
+- `test` installs the Playwright Chromium browser (`node_modules/.bin/playwright install --with-deps chromium`), then runs `yarn test:browser` (`web-test-runner` headless).
 - `site` installs root deps then `site/` deps — `site/` imports parent `src/`, which pulls `proof-vc-common` from the root `node_modules` — then runs the site's `format:check`, `lint:check`, `typecheck`, `build`.
 - Workflow-level `permissions: contents: read`; the publish job adds `id-token: write` for OIDC.
 
@@ -186,5 +192,6 @@ A 404 after a successful provenance step means npm rejected auth (it returns 404
 - `@proof.com/proof-vc-common` is `yarn link`-ed during local dev to shadow the published version `package.json` depends on. Berry's `yarn link` mutates `package.json` (`resolutions`) and the lockfile, so under `enableImmutableInstalls` run it with `--no-immutable` and don't commit the resulting `resolutions`/`yarn.lock` changes.
 - `.yarnrc.yml` hardens the toolchain: `enableScripts: false` (no dependency lifecycle scripts run — allow a specific package via `dependenciesMeta.<pkg>.built: true` if one ever legitimately needs a build step) and `npmMinimalAgeGate: 1w` (refuses npm versions younger than a week, mirroring the dependabot `cooldown`). The gate is overridden per-scope to `0` for first-party `@proof.com` packages (via `npmScopes`), so a freshly published `@proof.com/proof-vc-common` can be consumed immediately while third-party deps keep the week-long cooldown.
 - `enableImmutableInstalls: true` makes every `yarn install` lockfile-strict (CI **and** local): it never writes `yarn.lock`, and aborts with `YN0028` if the committed lockfile is out of sync with `package.json`. To intentionally update the lockfile locally (bump a dep, re-link `proof-vc-common`), run `yarn install --no-immutable`, then commit the updated `yarn.lock`.
-- `tsconfig.json` excludes `site`, `dist`, `node_modules` — don't remove from `exclude`; the site imports parent `src/`, which would otherwise cause `rootDir` failures.
-- `dist/` is build output; `tsc` overwrites but doesn't delete stale files. Don't add a clean step without asking.
+- `tsconfig.json` has no `include`; it typechecks everything except `exclude: ["node_modules", "dist", "site", "test"]`. This fails closed — a new `.ts` anywhere (root config, a new top-level dir) is typechecked automatically rather than silently missed. `test/` and `site/` are excluded because they have their own configs (`tsconfig.test.json` re-includes `test/` with the `mocha` types; `site/` has its own `tsconfig.json`). `yarn typecheck` runs the root and test projects. The tests are typechecked separately by `tsconfig.test.json` (which extends the base, adds the `mocha` global types, and includes `test`); `yarn typecheck` runs both. `site/` has its own `tsconfig.json` (also bundler resolution) since it imports the parent `src/`. The `.mjs` config files (eslint, web-test-runner, custom-elements-manifest) are plain JS — not typechecked by `tsc`, but linted by ESLint.
+- `dist/` is build output from `tsdown` (`yarn build`): unbundled ESM (`index.js` + per-module) + `.d.ts` + declaration maps, plus the self-contained CDN bundle `proof-verify-id.min.js` (deps inlined, for `<script type="module">` via jsdelivr/unpkg). tsdown's `clean: true` wipes `dist/` before each build. The package ships both `dist` and `src` (`files`): shipping `src` lets the `.js.map` / `.d.ts.map` resolve to real source for go-to-source. `tsc` is typecheck-only (`--noEmit`). `yarn test:node` validates the built artifact (bundle self-containment, `dist` shape, SSR import) via `node:test`.
+- `dist/custom-elements.json` is the Custom Elements Manifest (config: `custom-elements-manifest.config.mjs`), generated by `yarn analyze`. It is a **build artifact**, not committed — the serious WC libraries (Lion, Vaadin, MGT, Wokwi, Apollo) gitignore + generate the manifest rather than tracking it; we follow that, adapted to a single package by emitting into `dist/`. So it's gitignored (via `dist/`), prettier-ignored, shipped via `files: ["dist"]` + the `customElements` field, and travels with the uploaded `dist` artifact (so the `publint` job, which downloads `dist` without building, still has it). `yarn build` runs `tsdown` **then** `yarn analyze` — the analyzer must run after tsdown or tsdown's `clean` wipes the manifest. The element's inner DOM is built with **method calls** (`setAttribute`/`classList.add`/`append`/`insertAdjacentHTML`) not property assignment — the analyzer otherwise mis-reads `this.#button.innerHTML = …` etc. as class fields. Private `#` members still appear in the manifest (`privacy:"private"`); that's spec-correct and every consumer tool ignores them, so no plugin strips them.

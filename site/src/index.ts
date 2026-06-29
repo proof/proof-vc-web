@@ -1,4 +1,4 @@
-import { init, transactionData, ProofVerifyId } from "../../src/index.ts";
+import { init, transactionData, ProofVerifyId } from "../../src";
 
 init({
   environment: "next",

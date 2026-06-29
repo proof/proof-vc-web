@@ -1,0 +1,13 @@
+{
+  /* Type-checks the tests (esbuild in @web/test-runner strips types, no check).
+     Scoped to test/ via `include` with the mocha globals, so those settings
+     don't leak into the src pass. `exclude` is just node_modules: the include
+     already limits scope, but it must override the base exclude (which lists
+     test/) or the tests would be skipped. */
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["mocha"]
+  },
+  "include": ["test"],
+  "exclude": ["node_modules"]
+}

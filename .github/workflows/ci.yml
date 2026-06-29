@@ -9,6 +9,11 @@ on:
 permissions:
   contents: read
 
+# Cancel superseded runs on the same ref (e.g. rapid pushes to a PR branch).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   format:
     runs-on: ubuntu-latest
@@ -46,6 +51,33 @@ jobs:
       - run: yarn install
       - run: yarn typecheck
 
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: corepack enable
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: yarn
+      - run: yarn install
+      # @web/test-runner-playwright provides playwright transitively. Cache the
+      # downloaded Chromium binary (keyed on the lockfile) so it isn't
+      # re-fetched every run; OS deps are cheap and installed each time.
+      - name: Cache Playwright browsers
+        id: pw-cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+      - if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: node_modules/.bin/playwright install --with-deps chromium
+      - if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: node_modules/.bin/playwright install-deps chromium
+      - run: yarn test:browser
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -57,6 +89,9 @@ jobs:
           cache: yarn
       - run: yarn install
       - run: yarn build
+      # Node-side checks of the built artifact (bundle self-contained, dist shape,
+      # SSR-safe import). dist exists here, so run them in the build job.
+      - run: yarn test:node
       - uses: actions/upload-artifact@v7
         with:
           name: dist

@@ -1,27 +1,44 @@
-import type { HTMLAttributes } from "react";
-import type {
+import { register } from "./register";
+import * as React from "react";
+import { createComponent, type EventName } from "@lit/react";
+import {
+  ProofVerifyId as ProofVerifyIdElement,
+  type ProofErrorEventDetail,
+  type ProofNavigateEventDetail,
+} from "./proof-verify-id";
+
+/*
+ * Register on import — the wrapper needs the element defined. A register() call
+ * (not a bare side-effect import) survives tsdown's tree-shaking of dist/react.js.
+ */
+register();
+
+/**
+ * Typed React wrapper for `<proof-verify-id>`. Element properties become props;
+ * the `proof-error` / `proof-navigate` events map to `onProofError` /
+ * `onProofNavigate`. Importing also registers the element.
+ */
+export const ProofVerifyId = createComponent({
+  tagName: "proof-verify-id",
+  elementClass: ProofVerifyIdElement,
+  react: React,
+  events: {
+    /* Cast so @lit/react types these props with the CustomEvent detail. */
+    onProofError: "proof-error" as EventName<
+      CustomEvent<ProofErrorEventDetail>
+    >,
+    onProofNavigate: "proof-navigate" as EventName<
+      CustomEvent<ProofNavigateEventDetail>
+    >,
+  },
+});
+
+/* Re-export public types so React consumers import from one entry. */
+export type {
   AuthorizationUrlResolver,
-  ProofVerifyId,
-} from "./proof_verify_id.ts";
-import type { TransactionData } from "@proof.com/proof-vc-common";
-
-export interface ProofVerifyIdJSXAttributes extends HTMLAttributes<ProofVerifyId> {
-  nonce?: string;
-  state?: string;
-  theme?: "dark" | "gray" | "outline" | "primary";
-  size?: "icon" | "small" | "medium" | "large";
-  "login-hint"?: string;
-  "transaction-data"?: string;
-  transactionData?: TransactionData;
-  // Set as a property (React 19 assigns matching props on custom elements);
-  // on React < 19 use a ref instead, as function props are stringified.
-  resolveAuthorizationUrl?: AuthorizationUrlResolver;
-}
-
-declare module "react" {
-  namespace JSX {
-    interface IntrinsicElements {
-      "proof-verify-id": ProofVerifyIdJSXAttributes;
-    }
-  }
-}
+  ProofVerifyIdTheme,
+  ProofVerifyIdSize,
+  ProofErrorEventDetail,
+  ProofNavigateEventDetail,
+  ProofVerifyIdEventMap,
+} from "./proof-verify-id";
