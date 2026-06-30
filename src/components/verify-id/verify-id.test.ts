@@ -6,8 +6,8 @@ import {
   oneDefaultPreventedEvent,
   aTimeout,
 } from "@open-wc/testing";
-import { init } from "../../src";
-import type { ProofVerifyId } from "../../src/proof-verify-id";
+import { init } from "../../index";
+import type { ProofVerifyId } from "./verify-id";
 
 const tag = "proof-verify-id";
 
@@ -39,6 +39,7 @@ describe(tag, () => {
       el.size = "large";
       el.state = "abc";
       el.loginHint = "user@example.com";
+      await el.updateComplete;
       expect(el.getAttribute("theme")).to.equal("dark");
       expect(el.getAttribute("size")).to.equal("large");
       expect(el.getAttribute("state")).to.equal("abc");
@@ -65,6 +66,7 @@ describe(tag, () => {
         html`<proof-verify-id theme="dark"></proof-verify-id>`,
       );
       el.theme = null;
+      await el.updateComplete;
       expect(el.hasAttribute("theme")).to.be.false;
     });
   });
@@ -110,6 +112,7 @@ describe(tag, () => {
       );
       setTimeout(() => el.click());
       await oneEvent(el, "proof-error");
+      await el.updateComplete;
       expect(el.shadowRoot!.querySelector("button")!.disabled).to.be.false;
     });
   });
@@ -181,6 +184,7 @@ describe(tag, () => {
       el.resolveAuthorizationUrl = () => "https://example.com/auth";
       setTimeout(() => el.click());
       await oneDefaultPreventedEvent(el, "proof-navigate");
+      await el.updateComplete;
       expect(el.shadowRoot!.querySelector("button")!.disabled).to.be.false;
     });
 
@@ -227,13 +231,16 @@ describe(tag, () => {
           release = resolve;
         });
       el.click();
-      /* #navigate runs synchronously up to the awaited resolver. */
+      /* The flow set _pending synchronously; let Lit render so the host reflects
+         aria-busy and the button disables. */
+      await el.updateComplete;
       expect(el.getAttribute("aria-busy"), "busy while pending").to.equal(
         "true",
       );
       expect(el.shadowRoot!.querySelector("button")!.disabled).to.be.true;
       release(null); /* null aborts the redirect and restores the button */
       await aTimeout(0);
+      await el.updateComplete;
       expect(el.getAttribute("aria-busy"), "cleared after abort").to.equal(
         "false",
       );

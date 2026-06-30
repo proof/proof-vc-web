@@ -1,7 +1,9 @@
 import tseslint from "typescript-eslint";
 import unusedImports from "eslint-plugin-unused-imports";
+import lit from "eslint-plugin-lit";
+import wc from "eslint-plugin-wc";
 
-export const baseConfig = tseslint.config(
+const baseConfig = tseslint.config(
   { ignores: ["dist/**", ".yarn/**"] },
   ...tseslint.configs.recommended,
   {
@@ -27,14 +29,21 @@ export const baseConfig = tseslint.config(
 
 export default tseslint.config(
   ...baseConfig,
+  /* Lit template + web-component lint (rule-based; the only well-maintained
+     option — lit-analyzer is unmaintained). Component source only, not tests. */
   {
-    /* Safe merge: only adds typed add/removeEventListener overloads. */
-    files: ["src/proof-verify-id.ts"],
-    rules: { "@typescript-eslint/no-unsafe-declaration-merging": "off" },
+    ...lit.configs["flat/recommended"],
+    files: ["src/**/*.ts"],
+    ignores: ["src/**/*.test.ts"],
+  },
+  {
+    ...wc.configs["flat/recommended"],
+    files: ["src/**/*.ts"],
+    ignores: ["src/**/*.test.ts"],
   },
   {
     /* chai assertions like expect(x).to.be.true read as unused expressions. */
-    files: ["test/**/*.ts"],
+    files: ["test/**/*.ts", "src/**/*.test.ts"],
     rules: { "@typescript-eslint/no-unused-expressions": "off" },
   },
 );

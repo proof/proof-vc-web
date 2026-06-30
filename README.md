@@ -72,10 +72,10 @@ init({
 });
 ```
 
-then use the `<proof-verify-id />` HTML tag anywhere:
+then use the `<proof-verify-id>` HTML tag anywhere:
 
 ```html
-<proof-verify-id nonce="3e8e4918-e9fb-453a-a538-81152be15c1b" />
+<proof-verify-id nonce="3e8e4918-e9fb-453a-a538-81152be15c1b"></proof-verify-id>
 ```
 
 You can also provide a `login-hint` or `state`:
@@ -85,7 +85,7 @@ You can also provide a `login-hint` or `state`:
   nonce="3e8e4918-e9fb-453a-a538-81152be15c1b"
   state="6A2B4CD830"
   login-hint="frodo.baggins@theshire"
-/>
+></proof-verify-id>
 ```
 
 ### Transaction Templates
@@ -149,12 +149,12 @@ In React these are the `onProofError` and `onProofNavigate` props (see [React](#
 
 ## Styles
 
-You can customize your `<proof-verify-id />` with the following attributes:
+You can customize your `<proof-verify-id>` with the following attributes:
 
 - `theme`: `dark` | `gray` | `outline` | `primary` (default)
 - `size`: `icon` | `small` | `medium` (default) | `large`
 
-<img src="https://raw.githubusercontent.com/proof/proof-vc-web/main/docs/buttons.png" alt="proof-verify-id button themes and sizes" width="800"/>
+<img src="https://raw.githubusercontent.com/proof/proof-vc-web/main/docs/buttons.png" alt="Continue with Proof button — themes and sizes" width="800"/>
 
 ## TypeScript
 
@@ -189,7 +189,7 @@ _API Documentation_ https://dev.proof.com/reference/authorizeverifiablecredentia
 
 ## Changelog
 
-Release notes are published on the [GitHub Releases](https://github.com/proof/proof-vc-web/releases) page; see also [CHANGELOG.md](CHANGELOG.md).
+Release notes are published on the [GitHub Releases](https://github.com/proof/proof-vc-web/releases) page.
 
 ## Contributing
 

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Proof Digital Credentials — Web Components Playground</title>
+    <style>
+      body {
+        margin: 0;
+        font-family:
+          "Inter",
+          ui-sans-serif,
+          system-ui,
+          -apple-system;
+        color: #040919;
+      }
+      main {
+        padding: 32px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+      }
+      .intro {
+        margin: 8px 0 0;
+        max-width: 60ch;
+        font-size: 14px;
+        color: #595966;
+      }
+      .grid {
+        margin-top: 24px;
+      }
+      .row {
+        display: flex;
+        gap: 24px;
+        align-items: center;
+        flex-wrap: wrap;
+        padding: 24px 0;
+        border-top: 1px solid #eaeaef;
+      }
+      .row__label {
+        margin: 0;
+        width: 80px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #595966;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+    </style>
+    <script type="module" src="/playground/playground.ts"></script>
+  </head>
+  <body>
+    <main>
+      <h1>Proof Digital Credentials — Web Components Playground</h1>
+      <p class="intro">
+        Every theme and size of <code>&lt;proof-verify-id&gt;</code>. Clicking a
+        button starts a real authorization redirect. Buttons read, left to
+        right: <strong>icon</strong>, <strong>small</strong>,
+        <strong>medium</strong>, <strong>large</strong>.
+      </p>
+
+      <div class="grid">
+        <section class="row">
+          <h2 class="row__label">dark</h2>
+          <proof-verify-id
+            nonce="123"
+            theme="dark"
+            size="icon"
+          ></proof-verify-id>
+          <proof-verify-id
+            nonce="123"
+            theme="dark"
+            size="small"
+          ></proof-verify-id>
+          <proof-verify-id
+            nonce="123"
+            theme="dark"
+            id="tx-demo"
+          ></proof-verify-id>
+          <proof-verify-id
+            nonce="123"
+            theme="dark"
+            size="large"
+          ></proof-verify-id>
+        </section>
+        <section class="row">
+          <h2 class="row__label">gray</h2>
+          <proof-verify-id
+            nonce="123"
+            theme="gray"
+            size="icon"
+          ></proof-verify-id>
+          <proof-verify-id
+            nonce="123"
+            theme="gray"
+            size="small"
+          ></proof-verify-id>
+          <proof-verify-id
+            nonce="123"
+            theme="gray"
+            size="medium"
+          ></proof-verify-id>
+          <proof-verify-id
+            nonce="123"
+            theme="gray"
+            size="large"
+          ></proof-verify-id>
+        </section>
+        <section class="row">
+          <h2 class="row__label">outline</h2>
+          <proof-verify-id
+            nonce="123"
+            theme="outline"
+            size="icon"
+          ></proof-verify-id>
+          <proof-verify-id
+            nonce="123"
+            theme="outline"
+            size="small"
+          ></proof-verify-id>
+          <proof-verify-id
+            nonce="123"
+            theme="outline"
+            size="medium"
+          ></proof-verify-id>
+          <proof-verify-id
+            nonce="123"
+            theme="outline"
+            size="large"
+          ></proof-verify-id>
+        </section>
+        <section class="row">
+          <h2 class="row__label">primary</h2>
+          <proof-verify-id
+            nonce="123"
+            theme="primary"
+            size="icon"
+          ></proof-verify-id>
+          <proof-verify-id
+            nonce="123"
+            theme="primary"
+            size="small"
+          ></proof-verify-id>
+          <proof-verify-id nonce="123"></proof-verify-id>
+          <proof-verify-id
+            nonce="123"
+            theme="primary"
+            size="large"
+          ></proof-verify-id>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

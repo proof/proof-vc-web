@@ -13,8 +13,8 @@ The package ships a Web Component (`<proof-verify-id>`) and is browser-only. It 
 
 Server-side rendering is supported through guards that make the module load safely in non-DOM environments, the element only works in the browser.
 
-A test site lives in `site/` and exists to exercise the component in a real browser; it is not published.
-To run it just `cd site && yarn dev`.
+A dev harness lives in `playground/` and exists to exercise the component in a real browser; it is not published.
+To run it just `yarn dev` (serves the playground at http://localhost:8000 via `@web/dev-server`).
 
 ## Commands
 

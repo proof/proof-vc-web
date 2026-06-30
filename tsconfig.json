@@ -1,13 +1,14 @@
 {
   /* tsc only typechecks; tsdown emits. Bundler resolution lets relative imports
-     omit extensions. No `include`: everything outside the excluded dirs is
-     checked, so a new .ts can't be silently missed. `test/` and `site/` are
-     excluded because they have their own configs. */
+     omit extensions. No `include`: everything outside the excluded paths is
+     checked (src + the playground harness), so a new .ts can't be silently
+     missed. `test/` and the co-located `*.test.ts` are excluded — they're
+     checked by tsconfig.test.json (which has the mocha globals). */
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "bundler",
     "target": "es2022",
-    "lib": ["es2022", "dom", "dom.iterable"],
+    "lib": ["es2022", "dom"],
     "types": [],
     "strict": true,
     "noUncheckedIndexedAccess": true,
@@ -16,9 +17,10 @@
     "isolatedModules": true,
     "moduleDetection": "force",
     "noUncheckedSideEffectImports": true,
-    "jsx": "react-jsx",
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false
   },
-  "exclude": ["node_modules", "dist", "site", "test"]
+  "exclude": ["node_modules", "dist", "test", "src/**/*.test.ts"]
 }

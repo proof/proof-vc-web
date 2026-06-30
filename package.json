@@ -23,11 +23,7 @@
   },
   "license": "Apache-2.0",
   "author": "Jeremie Charrier <jeremie.charrier@proof.com>",
-  "sideEffects": [
-    "./dist/index.js",
-    "./dist/react.js",
-    "./dist/proof-verify-id.min.js"
-  ],
+  "sideEffects": true,
   "type": "module",
   "exports": {
     ".": {
@@ -37,18 +33,24 @@
     "./react": {
       "types": "./dist/react.d.ts",
       "default": "./dist/react.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
+  "main": "./dist/index.js",
   "jsdelivr": "./dist/proof-verify-id.min.js",
   "unpkg": "./dist/proof-verify-id.min.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist",
-    "src"
+    "src",
+    "!src/**/*.test.ts"
   ],
   "scripts": {
-    "analyze": "custom-elements-manifest analyze",
+    "analyze": "custom-elements-manifest analyze --litelement",
     "build": "tsdown && yarn analyze",
     "check-all": "yarn format:check && yarn lint:check && yarn typecheck && yarn publint",
+    "dev": "web-dev-server",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . --fix",
@@ -60,7 +62,8 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json"
   },
   "dependencies": {
-    "@proof.com/proof-vc-common": "^0.2.0"
+    "@proof.com/proof-vc-common": "^0.2.0",
+    "lit": "^3.3.3"
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.11.0",
@@ -68,11 +71,14 @@
     "@open-wc/testing": "^4.0.0",
     "@types/mocha": "^10.0.10",
     "@types/react": "^19.2.17",
+    "@web/dev-server": "^0.4.6",
     "@web/dev-server-esbuild": "^1.0.5",
     "@web/test-runner": "^0.20.2",
     "@web/test-runner-playwright": "^0.11.1",
     "eslint": "^10.5.0",
+    "eslint-plugin-lit": "^2.3.1",
     "eslint-plugin-unused-imports": "^4.4.1",
+    "eslint-plugin-wc": "^3.1.0",
     "prettier": "^3.8.4",
     "prettier-plugin-packagejson": "^3.0.2",
     "publint": "^0.3.21",
@@ -98,9 +104,6 @@
     }
   },
   "packageManager": "yarn@4.17.0",
-  "engines": {
-    "node": ">=24.0.0"
-  },
   "publishConfig": {
     "access": "public"
   },

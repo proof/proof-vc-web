@@ -1,16 +1,7 @@
-import { register } from "./register";
-
-register();
-
-export { ProofVerifyId } from "./proof-verify-id";
-export type {
-  AuthorizationUrlResolver,
-  ProofVerifyIdTheme,
-  ProofVerifyIdSize,
-  ProofErrorEventDetail,
-  ProofNavigateEventDetail,
-  ProofVerifyIdEventMap,
-} from "./proof-verify-id";
+/* Package entry. `export *` from each component registers it on import (via the
+ * `@customElement` decorator) and re-exports its public API. Add a line per
+ * component. */
+export * from "./components/verify-id/verify-id";
 export {
   init,
   transactionData,
