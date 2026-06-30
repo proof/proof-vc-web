@@ -1,12 +1,6 @@
 # Build artifacts
 dist/
 
-# Dependency artifacts
-node_modules/
-
-# IDE artifacts
-.idea/
-
 # Yarn
 # https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
 .yarn/*

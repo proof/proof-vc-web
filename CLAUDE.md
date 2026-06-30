@@ -13,8 +13,8 @@ Browser-only ESM TypeScript package `@proof.com/proof-vc-web`. Ships one Web Com
 4. **Prompt before publishing.** Never bump the version, push tags, create a Release, or trigger the publish workflow without explicit confirmation — publishes are permanent.
 5. **Run `yarn check-all` before any commit or push.** It's this repo's "tests + lint": format, lint, typecheck, publint. `check-all` does **not** cover `site/` (root `tsconfig.json` excludes it). Since `site/` imports parent `src/` and pulls `proof-vc-common`, changes to `src/`, dependencies, or `site/` can break the site's CI even when `check-all` passes — so also run the site's checks before commit: `cd site && yarn format:check && yarn lint:check && yarn typecheck && yarn build`.
 6. **Keep `yarn publint` on `--pack npm`.** `--pack auto` picks yarn-1 mode and reports false-positive "file not published" errors.
-7. **Don't lower `engines.node` below `>=22.0.0`.** Matches proof-vc-common.
-8. **Never silence lint with `eslint-disable`.** Fix the underlying issue, not the warning. The only sanctioned exception is a reviewed config override (e.g. the per-file `no-namespace` rule for `src/react.ts` in `eslint.config.js`) — not inline disable comments.
+7. **Don't lower `engines.node` below `>=24.0.0`.** Matches the repo's pinned Node toolchain (`.node-version`).
+8. **Never silence lint with `eslint-disable`.** Fix the underlying issue, not the warning. The only sanctioned exception is a reviewed config override (e.g. the per-file `no-namespace` rule for `src/react.ts` in `eslint.config.mjs`) — not inline disable comments.
 
 ## Essential Commands
 
@@ -31,6 +31,8 @@ Browser-only ESM TypeScript package `@proof.com/proof-vc-web`. Ships one Web Com
 | `cd site && yarn dev` | Webpack dev server on http://localhost:4000  |
 
 Run tooling through `yarn`, not `npx` — the binaries are local devDependencies. Use the script when one exists (`yarn format:check`); otherwise run the local binary directly (`yarn prettier --check <file>`).
+
+Yarn (Berry) is committed under `.yarn/releases/` and pinned via `yarnPath` in `.yarnrc.yml`. Any `yarn` on PATH — a Corepack shim or a global yarn 1.x from Homebrew — reads `yarnPath` and re-execs the committed binary, so everyone runs the pinned version automatically (`packageManager` in `package.json` is kept in sync for Corepack's sake). You only need `corepack enable` if a machine has no `yarn` at all; it ships one with Node, and `yarnPath` takes over from there. CI still runs `corepack enable` before `setup-node` to guarantee a yarn binary on the runner, but ordering no longer matters now that the global yarn 1.x delegates through `yarnPath` too. To bump Yarn, run `yarn set version <version>` — with `yarnPath` already set it rewrites the committed release and `.yarnrc.yml`, so no doc edits are needed. `site/` needs no `.yarnrc.yml` of its own — `yarn` run there walks up to the root config and resolves `yarnPath` to the same committed binary.
 
 ## Architecture
 
@@ -114,7 +116,7 @@ Use `src/react.ts` as the template:
 
 1. Create `src/<framework>.ts` with the framework's module augmentation.
 2. Add to `package.json` `exports`: `"./<framework>": { "types": "./dist/<framework>.d.ts" }`.
-3. If its TS rules trip `no-namespace`, add the file to the per-file ESLint override in `eslint.config.js`.
+3. If its TS rules trip `no-namespace`, add the file to the per-file ESLint override in `eslint.config.mjs`.
 4. If a `@types/...` package is needed at build, add it to `devDependencies` and as an optional peer.
 
 ### Adjust the seal icon
@@ -181,6 +183,8 @@ A 404 after a successful provenance step means npm rejected auth (it returns 404
 - `yarn.lock` is the only lockfile (no `package-lock.json`).
 - Scope is `@proof.com` (with the dot), not `@proof`.
 - CI runs on the Node version in `.node-version`.
-- `@proof.com/proof-vc-common` is `yarn link`-ed during local dev; `package.json` already depends on the published version, the link just shadows it.
+- `@proof.com/proof-vc-common` is `yarn link`-ed during local dev to shadow the published version `package.json` depends on. Berry's `yarn link` mutates `package.json` (`resolutions`) and the lockfile, so under `enableImmutableInstalls` run it with `--no-immutable` and don't commit the resulting `resolutions`/`yarn.lock` changes.
+- `.yarnrc.yml` hardens the toolchain: `enableScripts: false` (no dependency lifecycle scripts run — allow a specific package via `dependenciesMeta.<pkg>.built: true` if one ever legitimately needs a build step) and `npmMinimalAgeGate: 1w` (refuses npm versions younger than a week, mirroring the dependabot `cooldown`). The gate is overridden per-scope to `0` for first-party `@proof.com` packages (via `npmScopes`), so a freshly published `@proof.com/proof-vc-common` can be consumed immediately while third-party deps keep the week-long cooldown.
+- `enableImmutableInstalls: true` makes every `yarn install` lockfile-strict (CI **and** local): it never writes `yarn.lock`, and aborts with `YN0028` if the committed lockfile is out of sync with `package.json`. To intentionally update the lockfile locally (bump a dep, re-link `proof-vc-common`), run `yarn install --no-immutable`, then commit the updated `yarn.lock`.
 - `tsconfig.json` excludes `site`, `dist`, `node_modules` — don't remove from `exclude`; the site imports parent `src/`, which would otherwise cause `rootDir` failures.
 - `dist/` is build output; `tsc` overwrites but doesn't delete stale files. Don't add a clean step without asking.

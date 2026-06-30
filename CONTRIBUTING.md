@@ -2,8 +2,10 @@
 
 ## Requirements
 
-- `node` >= 22.0.0
-- `yarn`
+- `node` >= 24.0.0 (CI and local dev use the version pinned in `.node-version`, currently 24.14.1)
+- `yarn` (Berry) — pinned by the committed release under `.yarn/releases/`, referenced by `yarnPath`. Any `yarn` on your PATH delegates to it, so Homebrew's yarn 1.x works fine. If you have no `yarn` at all, run `corepack enable` once to get one — it ships with Node, and the pinned release takes over from there.
+
+Installs are immutable: a plain `yarn install` never modifies `yarn.lock` and fails if it is out of sync with `package.json`. After adding or bumping a dependency, run `yarn install --no-immutable` and commit the updated `yarn.lock`.
 
 ## Design Principles
 
