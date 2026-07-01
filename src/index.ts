@@ -9,13 +9,8 @@ if (
 
 export { ProofVerifyId };
 export {
-  init,
-  transactionData,
+  buildAuthorizationUrl,
+  parseAuthorizationResponse,
   type Environment,
   type ResponseMode,
-  type TransactionData,
-  type WireInstructionsPayload,
-  type PaymentMandatePayload,
-  type PaymentItemizedPayload,
-  type SessionDataPayload,
 } from "@proof.com/proof-vc-common";

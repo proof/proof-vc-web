@@ -1,6 +1,7 @@
 import {
-  getAuthorizationRequestURL,
-  type TransactionData,
+  buildAuthorizationUrl,
+  type Environment,
+  type ResponseMode,
 } from "@proof.com/proof-vc-common";
 import { css } from "./styles.ts";
 
@@ -34,15 +35,7 @@ export class ProofVerifyId extends Base {
   readonly #button: HTMLButtonElement;
   readonly #label: HTMLSpanElement;
   #pending = false;
-  #transactionData: TransactionData | undefined;
   #resolveAuthorizationUrl: AuthorizationUrlResolver | undefined;
-
-  get transactionData(): TransactionData | undefined {
-    return this.#transactionData;
-  }
-  set transactionData(value: TransactionData | undefined) {
-    this.#transactionData = value;
-  }
 
   get resolveAuthorizationUrl(): AuthorizationUrlResolver | undefined {
     return this.#resolveAuthorizationUrl;
@@ -109,7 +102,7 @@ export class ProofVerifyId extends Base {
     try {
       const url = this.#resolveAuthorizationUrl
         ? await this.#resolveAuthorizationUrl()
-        : await this.#buildAuthorizationUrl();
+        : this.#buildAuthorizationUrl();
 
       // A nullish result aborts the redirect (e.g. the resolver cancelled).
       if (url) window.location.href = url;
@@ -119,23 +112,41 @@ export class ProofVerifyId extends Base {
     }
   }
 
-  async #buildAuthorizationUrl(): Promise<string> {
+  #buildAuthorizationUrl(): string {
+    const environment = this.getAttribute("environment");
+    const clientId = this.getAttribute("client-id");
+    const callbackUri = this.getAttribute("callback-uri");
     const nonce = this.nonce || this.getAttribute("nonce");
-    if (!nonce) {
-      throw new Error("<proof-verify-id>: 'nonce' is required");
+
+    const missing = [
+      ["environment", environment],
+      ["client-id", clientId],
+      ["callback-uri", callbackUri],
+      ["nonce", nonce],
+    ]
+      .filter(([, value]) => !value)
+      .map(([name]) => name);
+    if (missing.length) {
+      throw new Error(
+        `<proof-verify-id>: missing required attribute(s): ${missing.join(", ")}`,
+      );
     }
 
     const state = this.getAttribute("state");
     const login_hint = this.getAttribute("login-hint");
-    const transaction_data =
-      this.#transactionData ?? this.getAttribute("transaction-data");
+    const response_mode = this.getAttribute("response-mode");
 
-    return getAuthorizationRequestURL({
-      nonce,
+    return buildAuthorizationUrl({
+      environment: environment as Environment,
+      clientId: clientId!,
+      callbackUri: callbackUri!,
+      nonce: nonce!,
       scope: "urn:proof:params:scope:verifiable-credentials:basic",
+      ...(response_mode !== null && {
+        responseMode: response_mode as ResponseMode,
+      }),
       ...(state !== null && { state }),
       ...(login_hint !== null && { loginHint: login_hint }),
-      ...(transaction_data !== null && { transactionData: transaction_data }),
     });
   }
 

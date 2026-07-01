@@ -110,39 +110,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/hashes@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "@noble/hashes@npm:2.2.0"
-  checksum: 10c0/cad8630c504d6b9271984f685cd0af9101b40988fc2dfbe17ccdf068a9941f95cc5c9957d89e9ca4b7ca94c15cb35f93510c5d53a09fbcc83ee503b93d0a1034
-  languageName: node
-  linkType: hard
-
-"@owf/crypto@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@owf/crypto@npm:0.2.0"
-  dependencies:
-    "@noble/hashes": "npm:^2.2.0"
-    "@owf/identity-common": "npm:0.2.0"
-  checksum: 10c0/9f6b727e295bae84bef4c024fb91ddaeda1ddb61cdb85829dafc5e905b2d9d8909349ac26a8d8c05fc9f18f94d03fc38dd66e75bb36aaf20e14edc1dc0c187af
-  languageName: node
-  linkType: hard
-
-"@owf/identity-common@npm:0.2.0, @owf/identity-common@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@owf/identity-common@npm:0.2.0"
-  checksum: 10c0/9dc019d479ab11ee023960dc968d60fc7d3ead5ae084ffb623f2357bf5bf9af152ffa21bd474ca1dea0c61e95252b81fba96b05e0e957d66776dbfe78b8e0ecc
-  languageName: node
-  linkType: hard
-
-"@proof.com/proof-vc-common@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@proof.com/proof-vc-common@npm:0.2.0"
-  dependencies:
-    "@owf/crypto": "npm:^0.2.0"
-    "@owf/identity-common": "npm:^0.2.0"
-    "@sd-jwt/core": "npm:^0.19.0"
-    "@sd-jwt/sd-jwt-vc": "npm:^0.19.0"
-  checksum: 10c0/17f3db12cf182efab9792445ea1d2897a00d0fc9a51046945423dd4a099fd8c220562a0f1dbe0a14b2e02295736f4bbd22be510a43b5aaad04e3924e2a5d85b9
+"@proof.com/proof-vc-common@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@proof.com/proof-vc-common@npm:0.3.0"
+  checksum: 10c0/b43446b6bd53f86dc8510fcd58e4d5c2438a3bf6ed74e85fbb7d44e26f82fe09ac2cd7c38af4bb5043d99c84279409a4119ae628d00a775890fc3a9ada5cea6c
   languageName: node
   linkType: hard
 
@@ -150,7 +121,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@proof.com/proof-vc-web@workspace:."
   dependencies:
-    "@proof.com/proof-vc-common": "npm:^0.2.0"
+    "@proof.com/proof-vc-common": "npm:^0.3.0"
     "@types/react": "npm:^19.2.15"
     eslint: "npm:^10.4.0"
     eslint-plugin-unused-imports: "npm:^4.4.1"
@@ -171,79 +142,6 @@ __metadata:
   version: 0.1.4
   resolution: "@publint/pack@npm:0.1.4"
   checksum: 10c0/f70b2c8951b5d312ecfd40534e1dd1b0a4fe0fd207879a73c168e3f6979df6202b8b4d4f9a0ee9de6443f0bfb95ef47a0c27c7138c083d9224ef27c67adddefd
-  languageName: node
-  linkType: hard
-
-"@sd-jwt/core@npm:0.19.0, @sd-jwt/core@npm:^0.19.0":
-  version: 0.19.0
-  resolution: "@sd-jwt/core@npm:0.19.0"
-  dependencies:
-    "@sd-jwt/decode": "npm:0.19.0"
-    "@sd-jwt/present": "npm:0.19.0"
-    "@sd-jwt/types": "npm:0.19.0"
-    "@sd-jwt/utils": "npm:0.19.0"
-  checksum: 10c0/c1de1ddb9a8e905ef65ba3f9b2831223bda08fd531d8e000802447d7d72a9a67465aade07a781c1245e9a098fdda3c0c64d84e21b4ef11e02be3d21abb06a552
-  languageName: node
-  linkType: hard
-
-"@sd-jwt/decode@npm:0.19.0":
-  version: 0.19.0
-  resolution: "@sd-jwt/decode@npm:0.19.0"
-  dependencies:
-    "@sd-jwt/types": "npm:0.19.0"
-    "@sd-jwt/utils": "npm:0.19.0"
-  checksum: 10c0/52889de857802c5d49b74485ed5697ad88edd8b42e9158d243344564fb77d96fdeda3b5d831d9d28a6d0c8547c8ff17318979d296a1b58274b8906f97b50535c
-  languageName: node
-  linkType: hard
-
-"@sd-jwt/jwt-status-list@npm:0.19.0":
-  version: 0.19.0
-  resolution: "@sd-jwt/jwt-status-list@npm:0.19.0"
-  dependencies:
-    "@sd-jwt/types": "npm:0.19.0"
-    "@sd-jwt/utils": "npm:0.19.0"
-    pako: "npm:^2.1.0"
-  checksum: 10c0/c65d64098d8a62479e54e009253a3dab2ffbab516be50b3989aa8d9264be68ab2ca2fa1a9ba69fe414ba8255354f9fa46506d4674124bd01f4c361f1766db38d
-  languageName: node
-  linkType: hard
-
-"@sd-jwt/present@npm:0.19.0":
-  version: 0.19.0
-  resolution: "@sd-jwt/present@npm:0.19.0"
-  dependencies:
-    "@sd-jwt/decode": "npm:0.19.0"
-    "@sd-jwt/types": "npm:0.19.0"
-    "@sd-jwt/utils": "npm:0.19.0"
-  checksum: 10c0/019852c9a5a4db129374eccabe8e329d0cf4fffcf283acb7a02c027c1c01fb60ed00ac966c9e4ba422dd434335b5fed2e0f272e01ef1f539f6cdcb78968fe242
-  languageName: node
-  linkType: hard
-
-"@sd-jwt/sd-jwt-vc@npm:^0.19.0":
-  version: 0.19.0
-  resolution: "@sd-jwt/sd-jwt-vc@npm:0.19.0"
-  dependencies:
-    "@sd-jwt/core": "npm:0.19.0"
-    "@sd-jwt/jwt-status-list": "npm:0.19.0"
-    "@sd-jwt/utils": "npm:0.19.0"
-    zod: "npm:^4.3.5"
-  checksum: 10c0/234f380edb4e828a811d94fe78a981c9375633656521c873b646645b318f209fd64c165e4a51f0ddbc3c4d1bb1f161d9830d73ea91d43d3a8027217daff08a95
-  languageName: node
-  linkType: hard
-
-"@sd-jwt/types@npm:0.19.0":
-  version: 0.19.0
-  resolution: "@sd-jwt/types@npm:0.19.0"
-  checksum: 10c0/7450465c0f415b929a710a7c2bca1d998a418113c66f9ee7aff0eae3e14194fd1a1e5e538288f83170ff5729ae05f09f1bfd0bc0ce6398477fabba2cccc8d974
-  languageName: node
-  linkType: hard
-
-"@sd-jwt/utils@npm:0.19.0":
-  version: 0.19.0
-  resolution: "@sd-jwt/utils@npm:0.19.0"
-  dependencies:
-    "@sd-jwt/types": "npm:0.19.0"
-    js-base64: "npm:^3.7.8"
-  checksum: 10c0/0ed26d7a50c15e923d4599e47df07ac7208b8dc738f20bc2cd0fc6537479dd3076ac1496aa47ff9d76f8dd5c0d36337dbf7737650abf247428d8e90579d312cf
   languageName: node
   linkType: hard
 
@@ -779,13 +677,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-base64@npm:^3.7.8":
-  version: 3.7.8
-  resolution: "js-base64@npm:3.7.8"
-  checksum: 10c0/a4452a7e7f32b0ef568a344157efec00c14593bbb1cf0c113f008dddff7ec515b35147af0cd70a7735adb69a2a2bdee921adffea2ea465e2c856ba50d649b11e
-  languageName: node
-  linkType: hard
-
 "json-buffer@npm:3.0.1":
   version: 3.0.1
   resolution: "json-buffer@npm:3.0.1"
@@ -901,13 +792,6 @@ __metadata:
   version: 1.6.0
   resolution: "package-manager-detector@npm:1.6.0"
   checksum: 10c0/6419d0b840be64fd45bcdcb7a19f09b81b65456d5e7f7a3daac305a4c90643052122f6ac0308afe548ffee75e36148532a2002ea9d292754f1e385aa2e1ea03b
-  languageName: node
-  linkType: hard
-
-"pako@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "pako@npm:2.1.0"
-  checksum: 10c0/8e8646581410654b50eb22a5dfd71159cae98145bd5086c9a7a816ec0370b5f72b4648d08674624b3870a521e6a3daffd6c2f7bc00fdefc7063c9d8232ff5116
   languageName: node
   linkType: hard
 
@@ -1142,12 +1026,5 @@ __metadata:
   version: 0.1.0
   resolution: "yocto-queue@npm:0.1.0"
   checksum: 10c0/dceb44c28578b31641e13695d200d34ec4ab3966a5729814d5445b194933c096b7ced71494ce53a0e8820685d1d010df8b2422e5bf2cdea7e469d97ffbea306f
-  languageName: node
-  linkType: hard
-
-"zod@npm:^4.3.5":
-  version: 4.4.3
-  resolution: "zod@npm:4.4.3"
-  checksum: 10c0/7ea31b558e88f9faf44f31dd185e2e1cbf51fed3081787fb96cc2534749b50c0acfc6da7f0922a7353ed092dd358c7d50c28ea96c94d04af64191bd33152eca3
   languageName: node
   linkType: hard
