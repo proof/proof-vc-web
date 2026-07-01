@@ -129,7 +129,7 @@ Return `null` (or `undefined`) to cancel the redirect.
 
 The element dispatches two `CustomEvent`s. Both bubble and cross the shadow boundary (`composed`), so you can listen on the element or any ancestor:
 
-- **`proof-error`** — starting the flow failed (e.g. a missing `nonce`, or a `resolveAuthorizationUrl` that threw). `event.detail.error` holds the cause.
+- **`proof-error`** — starting the flow failed (e.g. a missing `nonce`, or a `resolveAuthorizationUrl` that threw). `event.detail.error` holds the cause (always an `Error`). If no listener calls `event.preventDefault()`, the element also logs it via `console.error`, so a misconfiguration is never a silent no-op.
 - **`proof-navigate`** — fired just before the browser is redirected to the authorization URL. `event.detail.url` is the resolved URL; call `event.preventDefault()` to suppress the hard redirect and navigate yourself (e.g. through a SPA router).
 
 ```javascript

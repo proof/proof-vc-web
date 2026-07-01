@@ -1,4 +1,10 @@
-import { LitElement, html, nothing, type TemplateResult } from "lit";
+import {
+  LitElement,
+  html,
+  nothing,
+  type PropertyValues,
+  type TemplateResult,
+} from "lit";
 import { property, state } from "lit/decorators.js";
 import {
   getAuthorizationRequestURL,
@@ -39,7 +45,12 @@ export type AuthorizationUrlResolver = () =>
 export type ProofVerifyIdTheme = "dark" | "gray" | "outline" | "primary";
 export type ProofVerifyIdSize = "icon" | "small" | "medium" | "large";
 
-/** Detail of the `proof-error` event dispatched when starting the flow fails. */
+/**
+ * Detail of the `proof-error` event dispatched when starting the flow fails.
+ * `error` is normalized to an `Error`. If no listener calls `preventDefault()`,
+ * the element also logs it via `console.error` so a misconfiguration isn't a
+ * silent no-op.
+ */
 export type ProofErrorEventDetail = { error: unknown };
 
 /** Detail of the `proof-navigate` event. Cancelable; `preventDefault()` to handle the redirect yourself. */
@@ -115,9 +126,13 @@ export class ProofVerifyId extends LitElement {
     });
   }
 
-  protected override updated(): void {
-    /* aria-busy belongs on the host, where the light DOM can observe it. */
-    this.setAttribute("aria-busy", this._pending ? "true" : "false");
+  protected override updated(changed: PropertyValues): void {
+    /* aria-busy on the host too (the inner button carries it for AT; the host
+       copy is observable from the light DOM). Write only when the busy state
+       flips, not on every unrelated reactive update. */
+    if (changed.has("_pending")) {
+      this.setAttribute("aria-busy", this._pending ? "true" : "false");
+    }
   }
 
   protected override render(): TemplateResult {
@@ -129,6 +144,7 @@ export class ProofVerifyId extends LitElement {
         type="button"
         class=${this._pending ? "loading" : nothing}
         ?disabled=${this._pending}
+        aria-busy=${this._pending ? "true" : nothing}
         aria-label=${iconOnly || this._pending ? LABEL : nothing}
       >
         ${SEAL}
@@ -174,14 +190,21 @@ export class ProofVerifyId extends LitElement {
         }
       }
     } catch (error) {
-      this.dispatchEvent(
+      /* Normalize to an Error so `detail.error.message` is always available
+         (proof-vc-common throws bare strings on some paths). */
+      const cause = error instanceof Error ? error : new Error(String(error));
+      const prevented = !this.dispatchEvent(
         new CustomEvent<ProofErrorEventDetail>("proof-error", {
-          detail: { error },
+          detail: { error: cause },
           bubbles: true,
           composed: true,
           cancelable: true,
         }),
       );
+      /* Surface unhandled failures so a misconfiguration (e.g. missing nonce,
+         no proof-error listener) isn't a silent no-op. preventDefault() in a
+         listener suppresses this fallback. */
+      if (!prevented) console.error("<proof-verify-id>:", cause);
     } finally {
       if (!navigating) this._pending = false;
     }

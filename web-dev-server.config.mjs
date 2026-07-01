@@ -1,4 +1,4 @@
-import { esbuildPlugin } from "@web/dev-server-esbuild";
+import { nodeResolve, tsPlugin } from "./web-dev.shared.mjs";
 
 /* Dev harness for the element (`yarn dev`). Serves playground/index.html at the
    root, transforms TS on the fly, and resolves bare imports (lit,
@@ -7,16 +7,16 @@ import { esbuildPlugin } from "@web/dev-server-esbuild";
    middleware maps `/` to the playground so the URL is clean. */
 export default {
   rootDir: ".",
+  port: 8000,
   open: true,
   watch: true,
-  nodeResolve: { browser: true, exportConditions: ["browser"] },
+  nodeResolve,
   middleware: [
     (context, next) => {
-      if (context.url === "/") context.url = "/playground/index.html";
+      /* context.path is query-stripped, so `/?foo=bar` still matches. */
+      if (context.path === "/") context.url = "/playground/index.html";
       return next();
     },
   ],
-  plugins: [
-    esbuildPlugin({ ts: true, target: "es2022", tsconfig: "tsconfig.json" }),
-  ],
+  plugins: [tsPlugin],
 };

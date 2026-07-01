@@ -33,6 +33,10 @@ jobs:
       # Node-side checks of the built artifact (bundle self-contained, SSR-safe
       # import). dist exists after build.
       - run: yarn test:node
+      # Behavioral tests too — this is the last gate before a permanent publish,
+      # so re-run the real element tests (not just the artifact checks).
+      - run: node_modules/.bin/playwright install --with-deps chromium
+      - run: yarn test:browser
       - run: yarn publint
       - name: Verify tag matches package.json
         run: |
