@@ -10,7 +10,6 @@ Read our [documentation](https://dev.proof.com/docs/digital-credentials-overview
 
 - [Installation](#installation)
 - [Getting Started](#getting-started)
-  - [Transaction Templates](#transaction-templates)
   - [Custom authorization URL](#custom-authorization-url)
 - [Styles](#styles)
 - [TypeScript](#typescript)
@@ -26,67 +25,50 @@ npm install @proof.com/proof-vc-web
 
 ## Getting Started
 
-To request a Verifiable Presentation, `init` the client once at the start of your application:
-
-```javascript
-import { init } from "@proof.com/proof-vc-web";
-
-init({
-  environment: "sandbox",
-  client_id: "<CLIENT_ID>",
-  callback_uri: "<CALLBACK_URI>",
-});
-```
-
-then use the `<proof-verify-id />` HTML tag anywhere:
-
-```html
-<proof-verify-id nonce="3e8e4918-e9fb-453a-a538-81152be15c1b" />
-```
-
-You can also provide a `login-hint` or `state`:
+To request a Verifiable Presentation, drop the `<proof-verify-id />` HTML tag anywhere and give it your verifier config:
 
 ```html
 <proof-verify-id
+  environment="sandbox"
+  client-id="<CLIENT_ID>"
+  callback-uri="<CALLBACK_URI>"
   nonce="3e8e4918-e9fb-453a-a538-81152be15c1b"
-  state="6A2B4CD830"
-  login-hint="frodo.baggins@theshire"
 />
 ```
 
-### Transaction Templates
+You can also provide a `login-hint`, `state`, or `response-mode` (`fragment` (default) | `direct_post`):
 
-You can use _Transaction Templates_ provided by [@proof.com/proof-vc-common](https://github.com/proof/proof-vc-common) via
-the `transactionData` prop:
-
-```javascript
-import { transactionData } from "@proof.com/proof-vc-web";
-
-const data = transactionData.paymentItemized({
-  title: "Drive Shaft",
-  description: "The Roadhouse (18+), May 6 2026",
-  currency: "USD",
-  items: [
-    { quantity: 2, unit_cost: 40.0, label: "General Admission" },
-    { quantity: 2, unit_cost: 11.4, label: "Fees" },
-  ],
-});
-
+```html
 <proof-verify-id
+  environment="sandbox"
+  client-id="<CLIENT_ID>"
+  callback-uri="<CALLBACK_URI>"
   nonce="3e8e4918-e9fb-453a-a538-81152be15c1b"
-  transactionData={data}
-/>;
+  state="6A2B4CD830"
+  login-hint="frodo.baggins@theshire"
+  response-mode="direct_post"
+/>
 ```
 
 ### Custom authorization URL
 
 You can pass a `resolveAuthorizationUrl` property to create your own authorization request URL (e.g. a Pushed Authorization Request server-side).
-When set, the element ignores the `nonce` / `state` / `login-hint` / `transactionData` attributes.
+When set, the element ignores the `environment` / `client-id` / `callback-uri` / `response-mode` / `nonce` / `state` / `login-hint` attributes.
 
 ```javascript
+import { buildAuthorizationUrl } from "@proof.com/proof-vc-web";
+
 <proof-verify-id
-  resolveAuthorizationUrl={async () => await getAuthorizationRequestURL()}
-/>
+  resolveAuthorizationUrl={() =>
+    buildAuthorizationUrl({
+      environment: "sandbox",
+      clientId: "<CLIENT_ID>",
+      callbackUri: "<CALLBACK_URI>",
+      nonce: "3e8e4918-e9fb-453a-a538-81152be15c1b",
+      scope: "urn:proof:params:scope:verifiable-credentials:basic",
+    })
+  }
+/>;
 ```
 
 Return `null` (or `undefined`) to cancel the redirect.
@@ -122,7 +104,7 @@ Or, drop a triple-slash reference in any `.d.ts` file in your project:
 /// <reference types="@proof.com/proof-vc-web/react" />
 ```
 
-Both forms activate the `React.JSX.IntrinsicElements` augmentation that types `nonce`, `theme`, `size`, `transactionData`, and the other attributes.
+Both forms activate the `React.JSX.IntrinsicElements` augmentation that types `environment`, `client-id`, `callback-uri`, `nonce`, `theme`, `size`, and the other attributes.
 
 ## Documentation
 

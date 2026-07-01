@@ -32,64 +32,42 @@
   <body>
     <div class="row">
       <span class="row__label">dark</span>
-      <proof-verify-id nonce="123" theme="dark" size="icon"></proof-verify-id>
-      <proof-verify-id nonce="123" theme="dark" size="small"></proof-verify-id>
-      <proof-verify-id
-        nonce="123"
-        theme="dark"
-        size="medium"
-        data-tx
-      ></proof-verify-id>
-      <proof-verify-id nonce="123" theme="dark" size="large"></proof-verify-id>
+      <proof-verify-id theme="dark" size="icon"></proof-verify-id>
+      <proof-verify-id theme="dark" size="small"></proof-verify-id>
+      <proof-verify-id theme="dark" size="medium"></proof-verify-id>
+      <proof-verify-id theme="dark" size="large"></proof-verify-id>
     </div>
     <div class="row">
       <span class="row__label">gray</span>
-      <proof-verify-id nonce="123" theme="gray" size="icon"></proof-verify-id>
-      <proof-verify-id nonce="123" theme="gray" size="small"></proof-verify-id>
-      <proof-verify-id nonce="123" theme="gray" size="medium"></proof-verify-id>
-      <proof-verify-id nonce="123" theme="gray" size="large"></proof-verify-id>
+      <proof-verify-id theme="gray" size="icon"></proof-verify-id>
+      <proof-verify-id theme="gray" size="small"></proof-verify-id>
+      <proof-verify-id theme="gray" size="medium"></proof-verify-id>
+      <proof-verify-id theme="gray" size="large"></proof-verify-id>
     </div>
     <div class="row">
       <span class="row__label">outline</span>
-      <proof-verify-id
-        nonce="123"
-        theme="outline"
-        size="icon"
-      ></proof-verify-id>
-      <proof-verify-id
-        nonce="123"
-        theme="outline"
-        size="small"
-      ></proof-verify-id>
-      <proof-verify-id
-        nonce="123"
-        theme="outline"
-        size="medium"
-      ></proof-verify-id>
-      <proof-verify-id
-        nonce="123"
-        theme="outline"
-        size="large"
-      ></proof-verify-id>
+      <proof-verify-id theme="outline" size="icon"></proof-verify-id>
+      <proof-verify-id theme="outline" size="small"></proof-verify-id>
+      <proof-verify-id theme="outline" size="medium"></proof-verify-id>
+      <proof-verify-id theme="outline" size="large"></proof-verify-id>
     </div>
     <div class="row">
       <span class="row__label">primary</span>
-      <proof-verify-id
-        nonce="123"
-        theme="primary"
-        size="icon"
-      ></proof-verify-id>
-      <proof-verify-id
-        nonce="123"
-        theme="primary"
-        size="small"
-      ></proof-verify-id>
-      <proof-verify-id nonce="123"></proof-verify-id>
-      <proof-verify-id
-        nonce="123"
-        theme="primary"
-        size="large"
-      ></proof-verify-id>
+      <proof-verify-id theme="primary" size="icon"></proof-verify-id>
+      <proof-verify-id theme="primary" size="small"></proof-verify-id>
+      <proof-verify-id></proof-verify-id>
+      <proof-verify-id theme="primary" size="large"></proof-verify-id>
     </div>
+
+    <script>
+      // Apply the shared verifier config to every demo button. In a real
+      // app these would be set per element (or rendered server-side).
+      for (const el of document.querySelectorAll("proof-verify-id")) {
+        el.setAttribute("environment", "next");
+        el.setAttribute("client-id", "caxdw5a7d");
+        el.setAttribute("callback-uri", "http://localhost:4000");
+        el.setAttribute("nonce", "123");
+      }
+    </script>
   </body>
 </html>
