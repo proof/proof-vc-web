@@ -24,10 +24,7 @@ const Base: typeof HTMLElement =
 const LABEL = "Continue with Proof";
 
 export type AuthorizationUrlResolver = () =>
-  | string
-  | null
-  | undefined
-  | Promise<string | null | undefined>;
+  string | null | undefined | Promise<string | null | undefined>;
 
 export class ProofVerifyId extends Base {
   static readonly observedAttributes = ["size"] as const;
