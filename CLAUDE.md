@@ -13,7 +13,7 @@ Browser-only ESM TypeScript package `@proof.com/proof-vc-web`. Ships one Web Com
 4. **Prompt before publishing.** Never bump the version, push tags, create a Release, or trigger the publish workflow without explicit confirmation — publishes are permanent.
 5. **Run `yarn check-all` before any commit or push.** It's this repo's "tests + lint": format, lint, typecheck, publint. `check-all` does **not** cover `site/` (root `tsconfig.json` excludes it). Since `site/` imports parent `src/` and pulls `proof-vc-common`, changes to `src/`, dependencies, or `site/` can break the site's CI even when `check-all` passes — so also run the site's checks before commit: `cd site && yarn format:check && yarn lint:check && yarn typecheck && yarn build`.
 6. **Keep `yarn publint` on `--pack npm`.** `--pack auto` picks yarn-1 mode and reports false-positive "file not published" errors.
-7. **Don't lower `engines.node` below `>=24.0.0`.** Matches the repo's pinned Node toolchain (`.node-version`).
+7. **Keep `engines.node` at `>=22.0.0`; keep the CI `typecheck-matrix` / `build-matrix` legs covering it.** Node 22 is the oldest maintained LTS (20 is EOL; `@sd-jwt/*` needs 20+). No test suite and no `@types/node`, so nothing runtime-guards the floor — the matrices run `yarn typecheck` / `yarn build` on Node 22 and 24 instead. Dev is on Node 24 (`.node-version`). Keep the low leg equal to the floor; raise both together.
 8. **Never silence lint with `eslint-disable`.** Fix the underlying issue, not the warning. The only sanctioned exception is a reviewed config override (e.g. the per-file `no-namespace` rule for `src/react.ts` in `eslint.config.mjs`) — not inline disable comments.
 
 ## Essential Commands
@@ -127,7 +127,8 @@ Replace the `SEAL_SVG` string in `proof_verify_id.ts` (assigned to `button.inner
 
 `.github/workflows/ci.yml`, on push and PR to `main`. One job per check, run in parallel: `format`, `lint`, `typecheck`, `build`, `publint`, `site`.
 
-- `build` uploads `dist/` as an artifact; `publint` `needs: build` and downloads it (publint resolves `exports` against the packed tarball, so it needs the build output).
+- `typecheck` and `build` each run as a Node 22 + 24 `*-matrix`, fronted by a same-named aggregate gate (`needs: *-matrix`, `if: always()`) so the ruleset needs only the stable `typecheck` / `build` check names, not the matrix legs. `format`, `lint`, `publint`, `site` stay single jobs on Node 24.
+- `build-matrix` uploads `dist/` from its Node 24 leg; `publint` `needs: build` and downloads it (publint resolves `exports` against the packed tarball).
 - `site` installs root deps then `site/` deps — `site/` imports parent `src/`, which pulls `proof-vc-common` from the root `node_modules` — then runs the site's `format:check`, `lint:check`, `typecheck`, `build`.
 - Workflow-level `permissions: contents: read`; the publish job adds `id-token: write` for OIDC.
 
