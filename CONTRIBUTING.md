@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- `node` >= 24.0.0 (CI and local dev use the version pinned in `.node-version`, currently 24.14.1)
+- `node` >= 22.0.0 (minimum supported, the `engines.node` floor). Develop on Node 24 (active LTS), pinned in `.node-version`.
 - `yarn` (Berry) — pinned by the committed release under `.yarn/releases/`, referenced by `yarnPath`. Any `yarn` on your PATH delegates to it, so Homebrew's yarn 1.x works fine. If you have no `yarn` at all, run `corepack enable` once to get one — it ships with Node, and the pinned release takes over from there.
 
 Installs are immutable: a plain `yarn install` never modifies `yarn.lock` and fails if it is out of sync with `package.json`. After adding or bumping a dependency, run `yarn install --no-immutable` and commit the updated `yarn.lock`.
@@ -31,6 +31,8 @@ To submit a pull request:
 - Start by forking the repo and branching off of `main`.
 - Include a clear title and description explaining what changed and why.
 - Keep changes focused, try to limit one issue or feature per PR.
+
+CI runs `typecheck` and `build` on a matrix of Node 22 (the `engines.node` floor) and Node 24 (active LTS, from `.node-version`). The other jobs (`format`, `lint`, `publint`, `site`) run on Node 24.
 
 ## Code of conduct
 
