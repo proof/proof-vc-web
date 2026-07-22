@@ -1,6 +1,6 @@
 {
   "name": "@proof.com/proof-vc-web",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Web Components for Proof Digital Credentials.",
   "keywords": [
     "VC",
