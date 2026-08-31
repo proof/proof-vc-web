@@ -3,13 +3,18 @@ import type {
   AuthorizationUrlResolver,
   ProofVerifyId,
 } from "./proof_verify_id.ts";
-import type { Environment, ResponseMode } from "@proof.com/proof-vc-common";
+import type {
+  Environment,
+  ResponseMode,
+  Scope,
+} from "@proof.com/proof-vc-common";
 
 export interface ProofVerifyIdJSXAttributes extends HTMLAttributes<ProofVerifyId> {
   environment?: Environment;
   "client-id"?: string;
   "callback-uri"?: string;
   "response-mode"?: ResponseMode;
+  scope?: Scope;
   nonce?: string;
   state?: string;
   theme?: "dark" | "gray" | "outline" | "primary";
