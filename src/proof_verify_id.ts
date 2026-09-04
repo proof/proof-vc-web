@@ -2,6 +2,7 @@ import {
   buildAuthorizationUrl,
   type Environment,
   type ResponseMode,
+  type Scope,
 } from "@proof.com/proof-vc-common";
 import { css } from "./styles.ts";
 
@@ -22,6 +23,9 @@ const Base: typeof HTMLElement =
     : (class {} as unknown as typeof HTMLElement);
 
 const LABEL = "Continue with Proof";
+
+const DEFAULT_SCOPE: Scope =
+  "urn:proof:params:scope:verifiable-credentials:basic";
 
 export type AuthorizationUrlResolver = () =>
   string | null | undefined | Promise<string | null | undefined>;
@@ -132,13 +136,14 @@ export class ProofVerifyId extends Base {
     const state = this.getAttribute("state");
     const login_hint = this.getAttribute("login-hint");
     const response_mode = this.getAttribute("response-mode");
+    const scope = this.getAttribute("scope");
 
     return buildAuthorizationUrl({
       environment: environment as Environment,
       clientId: clientId!,
       callbackUri: callbackUri!,
       nonce: nonce!,
-      scope: "urn:proof:params:scope:verifiable-credentials:basic",
+      scope: (scope as Scope | null) ?? DEFAULT_SCOPE,
       ...(response_mode !== null && {
         responseMode: response_mode as ResponseMode,
       }),

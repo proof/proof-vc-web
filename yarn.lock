@@ -110,10 +110,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@proof.com/proof-vc-common@npm:^0.4.3":
-  version: 0.4.3
-  resolution: "@proof.com/proof-vc-common@npm:0.4.3"
-  checksum: 10c0/7882e9b85e0a7c7e8e518a3a73d3fde965d7e4ff79a24b1d308ff815b408620946b68d35c66edbb77b094235cbc423d4af09739c99e27d686d3fcc53b71a3eb7
+"@proof.com/proof-vc-common@npm:^0.4.4":
+  version: 0.4.4
+  resolution: "@proof.com/proof-vc-common@npm:0.4.4"
+  checksum: 10c0/5104d24f678259fb32431521842b057b10f7a4978d3acc4cc0df07652d0e34c677ad86f53593edf0a58b560a7a6f46f659596c489972fbae6344a771608b7bb2
   languageName: node
   linkType: hard
 
@@ -121,7 +121,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@proof.com/proof-vc-web@workspace:."
   dependencies:
-    "@proof.com/proof-vc-common": "npm:^0.4.3"
+    "@proof.com/proof-vc-common": "npm:^0.4.4"
     "@types/react": "npm:^19.2.15"
     eslint: "npm:^10.4.0"
     eslint-plugin-unused-imports: "npm:^4.4.1"

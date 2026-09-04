@@ -13,4 +13,5 @@ export {
   parseAuthorizationResponse,
   type Environment,
   type ResponseMode,
+  type Scope,
 } from "@proof.com/proof-vc-common";

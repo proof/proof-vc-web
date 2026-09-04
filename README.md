@@ -36,7 +36,7 @@ To request a Verifiable Presentation, drop the `<proof-verify-id />` HTML tag an
 />
 ```
 
-You can also provide a `login-hint`, `state`, or `response-mode` (`fragment` (default) | `direct_post`):
+You can also provide a `login-hint`, `state`, `scope`, or `response-mode` (`fragment` (default) | `direct_post`):
 
 ```html
 <proof-verify-id
@@ -50,10 +50,23 @@ You can also provide a `login-hint`, `state`, or `response-mode` (`fragment` (de
 />
 ```
 
+`scope` selects which credential to request. It defaults to
+`urn:proof:params:scope:verifiable-credentials:basic`:
+
+```html
+<proof-verify-id
+  environment="sandbox"
+  client-id="<CLIENT_ID>"
+  callback-uri="<CALLBACK_URI>"
+  nonce="3e8e4918-e9fb-453a-a538-81152be15c1b"
+  scope="urn:proof:params:scope:verifiable-credentials:nationality:us"
+/>
+```
+
 ### Custom authorization URL
 
 You can pass a `resolveAuthorizationUrl` property to create your own authorization request URL (e.g. a Pushed Authorization Request server-side).
-When set, the element ignores the `environment` / `client-id` / `callback-uri` / `response-mode` / `nonce` / `state` / `login-hint` attributes.
+When set, the element ignores the `environment` / `client-id` / `callback-uri` / `response-mode` / `nonce` / `state` / `login-hint` / `scope` attributes.
 
 ```javascript
 import { buildAuthorizationUrl } from "@proof.com/proof-vc-web";
