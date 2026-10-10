@@ -4,7 +4,7 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directory: "/"
+    directories: ["/", "/site"]
     schedule:
       interval: "weekly"
     cooldown:
@@ -13,17 +13,12 @@ updates:
       npm-minor-patch:
         patterns: ["*"]
         update-types: ["minor", "patch"]
-
-  - package-ecosystem: "npm"
-    directory: "/site"
-    schedule:
-      interval: "weekly"
-    cooldown:
-      default-days: 7
-    groups:
-      site-npm-minor-patch:
+      npm-major:
         patterns: ["*"]
-        update-types: ["minor", "patch"]
+        update-types: ["major"]
+      npm-security:
+        applies-to: security-updates
+        patterns: ["*"]
     ignore:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
@@ -38,3 +33,6 @@ updates:
       actions-minor-patch:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+      actions-major:
+        patterns: ["*"]
+        update-types: ["major"]
