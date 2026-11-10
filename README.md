@@ -254,7 +254,9 @@ React 19 sets `resolveAuthorizationUrl` as a property. With React 18 or earlier,
 <proof-verify-id theme="dark" size="large" ...></proof-verify-id>
 ```
 
-<img src="docs/buttons.png" alt="The button in all themes and sizes" width="800"/>
+<p align="center">
+  <img src="docs/buttons.png" alt="The button in all themes and sizes" width="800"/>
+</p>
 
 ## Attributes
 
