@@ -17,12 +17,13 @@ To build the authorization request URL yourself, without a button, use
 - [Installation](#installation)
 - [Quickstart](#quickstart)
 - [Usage](#usage)
-  - [Receive the presentation on your server](#receive-the-presentation-on-your-server)
-  - [Request other claims](#request-other-claims)
-  - [Pre-fill the user's email and keep your state](#pre-fill-the-users-email-and-keep-your-state)
-  - [Build the authorization URL on your server](#build-the-authorization-url-on-your-server)
+  - [Send the presentation to your server](#send-the-presentation-to-your-server)
+  - [Request specific claims](#request-specific-claims)
+  - [Pre-fill the email](#pre-fill-the-email)
+  - [Keep your page state](#keep-your-page-state)
+  - [Use a pushed authorization request](#use-a-pushed-authorization-request)
   - [Use React](#use-react)
-  - [Change the style](#change-the-style)
+  - [Choose a theme and size](#choose-a-theme-and-size)
 - [Attributes](#attributes)
 - [Properties](#properties)
 - [Reference](#reference)
@@ -108,7 +109,7 @@ if (credential instanceof ProofCredentialV1) {
 
 ## Usage
 
-### Receive the presentation on your server
+### Send the presentation to your server
 
 With `response-mode="direct_post"`, Proof sends the `vp_token` to your server in a POST request.
 Set `callback-uri` to your server endpoint. The callback must be a public HTTPS URL.
@@ -133,7 +134,7 @@ vp_token=eyJwcm9vZl9pZF9...&state=6A2B4CD830
 
 Verify `vp_token` as in the [Quickstart](#quickstart).
 
-### Request other claims
+### Request specific claims
 
 `scope` sets the claims that the user presents. The default is
 `urn:proof:params:scope:verifiable-credentials:basic`.
@@ -153,10 +154,9 @@ Verify `vp_token` as in the [Quickstart](#quickstart).
 | `urn:proof:params:scope:verifiable-credentials:basic`          | `given_name`, `family_name`, `age_equal_or_over.18` | `proof_id_default`        |
 | `urn:proof:params:scope:verifiable-credentials:nationality:us` | `age_equal_or_over.18`, `is_national.us`            | `proof_id_nationality_us` |
 
-### Pre-fill the user's email and keep your state
+### Pre-fill the email
 
-`login-hint` pre-fills the user's email on Proof. Proof sends `state` back to you with the
-presentation; `parseAuthorizationResponse` returns it as `response.state`.
+`login-hint` pre-fills the user's email on Proof.
 
 ```html
 <proof-verify-id
@@ -165,11 +165,19 @@ presentation; `parseAuthorizationResponse` returns it as `response.state`.
   callback-uri="https://example.com/callback"
   nonce="3e8e4918-e9fb-453a-a538-81152be15c1b"
   login-hint="alexander.sample@example.com"
-  state="6A2B4CD830"
 ></proof-verify-id>
 ```
 
-### Build the authorization URL on your server
+### Keep your page state
+
+Proof sends `state` back to your callback. `parseAuthorizationResponse` returns it as
+`response.state`.
+
+```html
+<proof-verify-id ... state="6A2B4CD830"></proof-verify-id>
+```
+
+### Use a pushed authorization request
 
 Set the `resolveAuthorizationUrl` property to get the URL from your server, for example to use
 [Pushed Authorization Requests or Secured Authorization Requests](https://github.com/proof/proof-vc-common#pushed-authorization-requests)
@@ -246,7 +254,7 @@ Or add this line to a `.d.ts` file in your project:
 React 19 sets `resolveAuthorizationUrl` as a property. With React 18 or earlier, set it through a
 `ref`.
 
-### Change the style
+### Choose a theme and size
 
 `theme` sets the colors and `size` sets the dimensions:
 
@@ -260,18 +268,18 @@ React 19 sets `resolveAuthorizationUrl` as a property. With React 18 or earlier,
 
 ## Attributes
 
-| Attribute       | Required | Default                                               | Description                                                              |
-| --------------- | -------- | ----------------------------------------------------- | ------------------------------------------------------------------------ |
-| `environment`   | yes      |                                                       | `"sandbox"` or `"production"`                                            |
-| `client-id`     | yes      |                                                       | Your Proof client ID                                                     |
-| `callback-uri`  | yes      |                                                       | Where Proof sends the presentation; one of your client's redirect URIs   |
-| `nonce`         | yes      |                                                       | A new random value for each request; compare it when you verify          |
-| `scope`         | no       | `urn:proof:params:scope:verifiable-credentials:basic` | The claims to request; see [Request other claims](#request-other-claims) |
-| `response-mode` | no       | `fragment`                                            | `fragment` sends the user to `callback-uri`; `direct_post` posts to it   |
-| `state`         | no       |                                                       | A value that Proof sends back with the presentation                      |
-| `login-hint`    | no       |                                                       | The user's email, pre-filled on Proof                                    |
-| `theme`         | no       | `primary`                                             | `primary`, `dark`, `gray` or `outline`                                   |
-| `size`          | no       | `medium`                                              | `small`, `medium`, `large` or `icon` (no label)                          |
+| Attribute       | Required | Default                                               | Description                                                                    |
+| --------------- | -------- | ----------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `environment`   | yes      |                                                       | `"sandbox"` or `"production"`                                                  |
+| `client-id`     | yes      |                                                       | Your Proof client ID                                                           |
+| `callback-uri`  | yes      |                                                       | Where Proof sends the presentation; one of your client's redirect URIs         |
+| `nonce`         | yes      |                                                       | A new random value for each request; compare it when you verify                |
+| `scope`         | no       | `urn:proof:params:scope:verifiable-credentials:basic` | The claims to request; see [Request specific claims](#request-specific-claims) |
+| `response-mode` | no       | `fragment`                                            | `fragment` sends the user to `callback-uri`; `direct_post` posts to it         |
+| `state`         | no       |                                                       | A value that Proof sends back with the presentation                            |
+| `login-hint`    | no       |                                                       | The user's email, pre-filled on Proof                                          |
+| `theme`         | no       | `primary`                                             | `primary`, `dark`, `gray` or `outline`                                         |
+| `size`          | no       | `medium`                                              | `small`, `medium`, `large` or `icon` (no label)                                |
 
 ## Properties
 
