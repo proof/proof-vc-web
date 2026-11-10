@@ -7,7 +7,9 @@ frameworks. When the user clicks it, the browser goes to Proof, the user present
 and Proof sends the user back to your website with the presentation (`vp_token`). Your server then
 verifies the presentation with [proof-vc-server](https://github.com/proof/proof-vc-common).
 
-<img src="docs/button.png" alt="The Continue with Proof button" width="300"/>
+<p align="center">
+  <img src="docs/button.png" alt="The Continue with Proof button" width="300"/>
+</p>
 
 To build the authorization request URL yourself, without a button, use
 [proof-vc-common](https://github.com/proof/proof-vc-common).
@@ -19,7 +21,6 @@ To build the authorization request URL yourself, without a button, use
   - [Request other claims](#request-other-claims)
   - [Pre-fill the user's email and keep your state](#pre-fill-the-users-email-and-keep-your-state)
   - [Build the authorization URL on your server](#build-the-authorization-url-on-your-server)
-  - [Start the flow from your own code](#start-the-flow-from-your-own-code)
   - [Use React](#use-react)
   - [Change the style](#change-the-style)
 - [Attributes](#attributes)
@@ -36,7 +37,7 @@ To build the authorization request URL yourself, without a button, use
 npm install @proof.com/proof-vc-web
 ```
 
-To verify the presentation on your server, also install proof-vc-server there:
+Install proof-vc-server on your server to verify the presentation:
 
 ```sh
 npm install @proof.com/proof-vc-server
@@ -47,17 +48,13 @@ in your Proof account, and add your callback URL to its redirect URIs.
 
 ## Quickstart
 
-This flow has three steps: the button page, the callback page, and the verification on your server.
-
-**1. Show the button.** Import the package once in your page's JavaScript. The import registers
-`<proof-verify-id>`.
+Import the package in your page's JavaScript. The import registers `<proof-verify-id>`.
 
 ```js
 import "@proof.com/proof-vc-web";
 ```
 
-Your server makes a new random `nonce` for each page view, keeps it in the user's session, and
-writes it in the page:
+Write a new random `nonce` in the page for each page view, and keep it in the user's session:
 
 ```html
 <proof-verify-id
@@ -68,11 +65,8 @@ writes it in the page:
 ></proof-verify-id>
 ```
 
-On `sandbox`, Proof asks for a phone number: enter any number, then click **Use test code** to skip
-the text message.
-
-**2. Read the presentation on the callback page.** Proof sends the user to
-`https://example.com/callback#vp_token=...`. Send the `vp_token` to your server:
+Proof sends the user to `https://example.com/callback#vp_token=...`. On the callback page, send the
+`vp_token` to your server:
 
 ```js
 import { parseAuthorizationResponse } from "@proof.com/proof-vc-web";
@@ -88,8 +82,8 @@ if (response?.type === "success") {
 }
 ```
 
-**3. Verify the presentation on your server.** Compare the credential's nonce with the nonce in
-the user's session:
+Verify the presentation on your server, and compare the credential's nonce with the nonce in the
+user's session:
 
 ```js
 import { createVerifier, ProofCredentialV1 } from "@proof.com/proof-vc-server";
@@ -116,9 +110,8 @@ if (credential instanceof ProofCredentialV1) {
 
 ### Receive the presentation on your server
 
-With `response-mode="direct_post"`, Proof's servers send the `vp_token` to your server in a POST
-request, and you do not need a callback page. Set `callback-uri` to your server endpoint. Proof
-must be able to reach it: use a public HTTPS URL, not `localhost`.
+With `response-mode="direct_post"`, Proof sends the `vp_token` to your server in a POST request.
+Set `callback-uri` to your server endpoint. The callback must be a public HTTPS URL.
 
 ```html
 <proof-verify-id
@@ -138,7 +131,7 @@ POST https://example.com/verify
 vp_token=eyJwcm9vZl9pZF9...&state=6A2B4CD830
 ```
 
-Verify `vp_token` as in step 3 of the [Quickstart](#quickstart).
+Verify `vp_token` as in the [Quickstart](#quickstart).
 
 ### Request other claims
 
@@ -214,21 +207,9 @@ const url = await proof.authorizationUrl({
 });
 ```
 
-### Start the flow from your own code
-
-`click()` on the element starts the flow, for example when the user submits your form:
-
-```js
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-  form.querySelector("proof-verify-id").click();
-});
-```
-
 ### Use React
 
-`<proof-verify-id>` works in React 19 and later. Import the package once, for example in your
-entry file:
+`<proof-verify-id>` works in React 19 and later. Import the package in your entry file:
 
 ```tsx
 import "@proof.com/proof-vc-web";
@@ -301,7 +282,7 @@ React 19 sets `resolveAuthorizationUrl` as a property. With React 18 or earlier,
 
 | Name                         | Description                                                                 |
 | ---------------------------- | --------------------------------------------------------------------------- |
-| `<proof-verify-id>`          | The button; the import registers it                                         |
+| `<proof-verify-id>`          | The button, registered by the import                                        |
 | `ProofVerifyId`              | The element's class                                                         |
 | `parseAuthorizationResponse` | Reads the presentation or the error from the callback URL                   |
 | `buildAuthorizationUrl`      | Builds the authorization request URL from the same values as the attributes |
