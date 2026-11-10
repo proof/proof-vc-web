@@ -63,7 +63,7 @@
       // Apply the shared verifier config to every demo button. In a real
       // app these would be set per element (or rendered server-side).
       for (const el of document.querySelectorAll("proof-verify-id")) {
-        el.setAttribute("environment", "next");
+        el.setAttribute("environment", "sandbox");
         el.setAttribute("client-id", "caxdw5a7d");
         el.setAttribute("callback-uri", "http://localhost:4000");
         el.setAttribute("nonce", "123");
