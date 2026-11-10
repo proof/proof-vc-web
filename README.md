@@ -8,7 +8,7 @@ and Proof sends the user back to your website with the presentation (`vp_token`)
 verifies the presentation with [proof-vc-server](https://github.com/proof/proof-vc-common).
 
 <p align="center">
-  <img src="docs/button.png" alt="The Continue with Proof button" width="300"/>
+  <a href="https://api.fairfax.proof.com/verifiable-credentials/v1/presentation/authorize?response_type=vp_token&client_id=caqnb6rwn&response_mode=fragment&redirect_uri=https%3A%2F%2Ftry.proof.com&scope=urn%3Aproof%3Aparams%3Ascope%3Averifiable-credentials%3Abasic&nonce=3f947e15-fcf0-4cd7-9030-61fde6632322&state=merchant.fairfax"><img src="docs/button.png" alt="Continue with Proof: try the sandbox flow" width="300"/></a>
 </p>
 
 To build the authorization request URL yourself, without a button, use
