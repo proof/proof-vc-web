@@ -7,6 +7,12 @@ if (
   customElements.define("proof-verify-id", ProofVerifyId);
 }
 
+declare global {
+  interface HTMLElementTagNameMap {
+    "proof-verify-id": ProofVerifyId;
+  }
+}
+
 export { ProofVerifyId };
 export {
   buildAuthorizationUrl,
