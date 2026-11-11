@@ -7,6 +7,9 @@ frameworks. When the user clicks it, the browser goes to Proof, the user present
 and Proof sends the user back to your website with the presentation (`vp_token`). Your server then
 verifies the presentation with [proof-vc-server](https://github.com/proof/proof-vc-common).
 
+To build the authorization request URL yourself, without a button, use
+[proof-vc-common](https://github.com/proof/proof-vc-common).
+
 <p align="center">
   <a href="https://api.fairfax.proof.com/verifiable-credentials/v1/presentation/authorize?response_type=vp_token&client_id=caqnb6rwn&response_mode=fragment&redirect_uri=https%3A%2F%2Ftry.proof.com&scope=urn%3Aproof%3Aparams%3Ascope%3Averifiable-credentials%3Abasic&nonce=3f947e15-fcf0-4cd7-9030-61fde6632322&state=merchant.fairfax"><img src="docs/button.png" alt="Continue with Proof: try the sandbox flow" width="300"/></a>
   <br/>
@@ -298,9 +301,6 @@ React 19 sets `resolveAuthorizationUrl` as a property. With React 18 or earlier,
 | `Environment`                | Type: `"sandbox" \| "production"`                                           |
 | `ResponseMode`               | Type: `"fragment" \| "direct_post"`                                         |
 | `Scope`                      | Type of `scope`                                                             |
-
-To build the authorization request URL yourself, without a button, use
-[proof-vc-common](https://github.com/proof/proof-vc-common).
 
 ## Errors
 
