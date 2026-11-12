@@ -182,7 +182,7 @@ Proof sends `state` back to your callback. `parseAuthorizationResponse` returns 
 ### Use a pushed authorization request
 
 Set the `resolveAuthorizationUrl` property to get the URL from your server, for example to use
-[Pushed Authorization Requests or Secured Authorization Requests](https://github.com/proof/proof-vc-common#pushed-authorization-requests)
+[Pushed Authorization Requests or Secured Authorization Requests](https://github.com/proof/proof-vc-common#secure-the-request)
 with proof-vc-server. When you set it, the element ignores its other attributes. Return `null` to
 cancel the redirect.
 
